@@ -1,0 +1,4370 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HenryAlexCV.ipynb</title>
+
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-light: #a78bfa;
+            --primary-dark: #4c1d95;
+            --dark: #0f172a;
+            --dark-2: #111827;
+            --dark-3: #1e293b;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --terminal: #111111;
+            --bluebar: #0ea5e9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--light);
+            color: var(--text);
+        }
+
+        .app {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: 60px;
+            background: #111827;
+            color: #e2e8f0;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 14px;
+        }
+
+        .cv-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--primary), #2563eb);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .file-title h1 {
+            font-size: 20px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .menus {
+            display: flex;
+            gap: 22px;
+            font-size: 14px;
+            margin-top: 4px;
+            color: #cbd5e1;
+        }
+
+        .top-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .share {
+            border: none;
+            background: #312e81;
+            color: #e0e7ff;
+            padding: 9px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .toolbar {
+            height: 44px;
+            background: #1e293b;
+            color: #cbd5e1;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .command {
+            background: #0f172a;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            box-shadow: 0 1px 4px #020617;
+        }
+
+        .connect {
+            margin-left: auto;
+            font-weight: bold;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+        }
+
+        .activity {
+            width: 48px;
+            background: #0b1220;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 12px;
+            gap: 28px;
+            font-size: 21px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #111827;
+            color: #cbd5e1;
+            padding: 16px 14px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 20px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        .explorer-title {
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 18px;
+            font-weight: bold;
+        }
+
+        .folder-header {
+            color: var(--primary-light);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 14px 0 8px;
+            user-select: none;
+            font-size: 14px;
+        }
+
+        .folder-header span {
+            margin-right: 6px;
+        }
+
+        .folder-content {
+            display: block;
+            margin-left: 8px;
+        }
+
+        .folder-content.closed {
+            display: none;
+        }
+
+        .file-item {
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .file-item:hover,
+        .file-item.active {
+            background: #1e293b;
+            color: white;
+        }
+
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .tabs {
+            height: 36px;
+            background: #252526;
+            display: flex;
+            align-items: end;
+            overflow-x: auto;
+        }
+
+        .tab {
+            height: 30px;
+            background: #1e293b;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 12px;
+            font-size: 14px;
+            border-right: 1px solid #334155;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            background: #0f172a;
+            border-top: 2px solid var(--primary);
+        }
+
+        .tab button {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .notebook {
+            flex: 1;
+            overflow-y: auto;
+            background: #f8fafc;
+            padding: 32px 26px 130px;
+        }
+
+        .cell {
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            margin-bottom: 18px;
+            padding: 18px 20px;
+            box-shadow: 0 1px 3px #e2e8f0;
+            background: white;
+        }
+
+        .cell-label {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 14px;
+            font-family: Consolas, monospace;
+        }
+
+        .cell h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .cell h3 {
+            margin-bottom: 10px;
+        }
+
+        .cell p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .cell ul {
+            padding-left: 22px;
+            line-height: 1.7;
+        }
+
+        .code {
+            background: #0f172a;
+            color: #d1fae5;
+            padding: 18px;
+            border-radius: 6px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.7;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .skill {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .bar span {
+            display: block;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .terminal {
+            height: 100px;
+            background: var(--terminal);
+            color: #d1fae5;
+            border-top: 2px solid #475569;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            padding: 8px 14px;
+        }
+
+        .terminal-tabs {
+            display: flex;
+            gap: 22px;
+            color: #cbd5e1;
+            font-size: 12px;
+            margin-bottom: 14px;
+        }
+
+        .terminal-tabs span:first-child {
+            color: white;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 4px;
+        }
+
+        .statusbar {
+            height: 20px;
+            background: var(--bluebar);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 12px;
+            font-weight: bold;
+            gap: 20px;
+        }
+
+        .statusbar .right {
+            margin-left: auto;
+            display: flex;
+            gap: 20px;
+        }
+
+
+
+
+
+
+
+
+
+
+        .colab-cell {
+            display: grid;
+            grid-template-columns: 42px 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .execution-count {
+            font-family: Consolas, monospace;
+            color: #64748b;
+            padding-top: 18px;
+            font-size: 13px;
+        }
+
+        .cell-body {
+            background: #f8fafc;
+
+
+
+            border-top: 1px solid #dbe4f0;
+            border-right: 1px solid #dbe4f0;
+            border-bottom: 1px solid #dbe4f0;
+
+            border-radius: 0 14px 14px 0;
+
+            overflow: hidden;
+
+            padding-bottom: 18px;
+        }
+
+        .cell-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 16px 22px 8px 22px;
+
+            background: #f8fafc;
+
+            border-bottom: none;
+
+            color: #7c3aed;
+
+            font-weight: bold;
+
+            font-family: Consolas, monospace;
+        }
+
+        .run-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+
+            background: linear-gradient(135deg,
+                    #0c0c0c,
+                    #0f0f10);
+
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+
+            transition: 0.25s ease;
+
+            animation: pulseRun 2s infinite;
+        }
+
+        .run-btn:hover {
+            transform: scale(1.12);
+            background: linear-gradient(135deg,
+                    #8b5cf6,
+                    #2563eb);
+        }
+
+
+
+
+        @keyframes pulseRun {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7);
+            }
+
+            70% {
+                transform: scale(1.08);
+                box-shadow: 0 0 0 12px rgba(124, 58, 237, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0);
+            }
+        }
+
+
+
+
+
+
+        .code-input {
+
+            margin: 0 22px;
+
+            padding: 22px 24px;
+
+            background: #081229;
+
+            color: #ffffff;
+
+            border-radius: 10px;
+
+            font-family: Consolas, monospace;
+
+            font-size: 14px;
+
+            line-height: 1.9;
+
+            white-space: pre;
+
+            overflow-x: auto;
+            overflow-y: auto;
+
+            max-height: 250px;
+
+            box-shadow:
+                inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+                0 8px 18px rgba(2, 6, 23, 0.25);
+        }
+
+
+
+        .code-input::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .code-input::-webkit-scrollbar-track {
+            background: #081229;
+        }
+
+        .code-input::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 20px;
+        }
+
+        .code-input::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+
+
+        .code-comment {
+            color: #22c55e;
+        }
+
+        .code-tag {
+            color: #a855f7;
+        }
+
+        .code-var {
+            color: #f97316;
+        }
+
+
+
+        /* ESTILOS PROFILE */
+
+        .cell-output {
+            display: none;
+            background: #f8fafc;
+            padding: 18px 22px 22px;
+            margin-top: 22px;
+
+        }
+
+        .cell-output.show {
+            display: block;
+        }
+
+        .profile-result {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .heatmap-photo {
+            width: 160px;
+            height: 160px;
+            border-radius: 18px;
+
+            position: relative;
+            overflow: hidden;
+
+            background:
+                radial-gradient(circle at 25% 25%, rgba(255, 0, 0, 0.65), transparent 35%),
+                radial-gradient(circle at 70% 30%, rgba(255, 255, 0, 0.65), transparent 35%),
+                radial-gradient(circle at 40% 75%, rgba(0, 255, 255, 0.55), transparent 35%),
+                linear-gradient(135deg, #312e81, #7c3aed, #0ea5e9);
+
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+        }
+
+        .heatmap-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+
+            mix-blend-mode: overlay;
+            filter: contrast(1.15) saturate(1.5);
+        }
+
+        .heatmap-photo::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+
+            background:
+                radial-gradient(circle at 20% 25%, rgba(255, 0, 0, 0.55), transparent 35%),
+                radial-gradient(circle at 75% 35%, rgba(255, 255, 0, 0.45), transparent 35%),
+                radial-gradient(circle at 45% 80%, rgba(0, 255, 255, 0.45), transparent 35%);
+
+            pointer-events: none;
+        }
+
+        .profile-heatmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 160px;
+        }
+
+        .heatmap-caption {
+            margin-top: 8px;
+            text-align: center;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            color: #64748b;
+
+            font-family: Consolas, monospace;
+        }
+
+        .profile-data h2 {
+            margin-bottom: 6px;
+        }
+
+        .profile-data h3 {
+            color: #4c1d95;
+            margin-bottom: 14px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .info-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .info-item strong {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+
+
+
+
+        /* ESTILOS PROFILE */
+
+
+
+
+        .output-section {
+            background: #f8fafc;
+            border: 1px solid #dbe4f0;
+            border-left: 5px solid #7c3aed;
+            border-radius: 10px;
+            padding: 14px;
+
+            margin-bottom: 20px;
+        }
+
+        .profile-summary {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 22px;
+            align-items: center;
+            padding: 4px;
+        }
+
+        .profile-summary-text {
+            padding-top: 4px;
+        }
+
+        .profile-summary-text h2 {
+            font-size: 26px;
+            margin-bottom: 4px;
+        }
+
+        .profile-summary-text h3 {
+            color: #4c1d95;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .profile-summary-text p {
+            margin-bottom: 4px;
+        }
+
+        .info-grid-output {
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .info-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 8px;
+            padding: 10px 12px;
+
+            min-height: 64px;
+        }
+
+        .info-card strong {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .info-card span {
+            font-size: 15px;
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        @media (max-width: 1100px) {
+            .info-grid-output {
+                grid-template-columns: repeat(2, minmax(180px, 1fr));
+            }
+
+            .profile-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .output-title {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 10px;
+            font-family: Consolas, monospace;
+        }
+
+        /* ESTILO DE SKILLS */
+
+        .skills-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .skill-stat-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .skill-stat-card strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+            margin-bottom: 4px;
+        }
+
+        .skill-stat-card span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .skills-layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 18px;
+        }
+
+        .hard-skills-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .skill-bar-row {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .skill-bar-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .skill-bar-top span:first-child {
+            color: #0f172a;
+        }
+
+        .skill-bar-top span:last-child {
+            color: #4c1d95;
+        }
+
+        .skill-bar-track {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 30px;
+            overflow: hidden;
+        }
+
+        .skill-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #0ea5e9);
+            border-radius: 30px;
+        }
+
+        .soft-skills-panel {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .soft-skills-panel h3 {
+            color: #4c1d95;
+            margin-bottom: 12px;
+        }
+
+        .skill-tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag-sm {
+            background: #ede9fe;
+            color: #4c1d95;
+            border: 1px solid #c4b5fd;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .radar-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 18px;
+        }
+
+        .radar-card h3 {
+            color: #4c1d95;
+            margin-bottom: 10px;
+        }
+
+        .radar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .radar-svg {
+            width: 220px;
+            height: 220px;
+        }
+
+        .radar-legend {
+            display: grid;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .radar-legend span {
+            display: block;
+            color: #334155;
+        }
+
+        @media (max-width: 1100px) {
+            .skills-dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .skills-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .radar-wrap {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .radar-svg {
+                width: 280px;
+                height: 280px;
+            }
+        }
+
+
+
+
+
+
+
+        /* ESTILOS LANGUAJES */
+
+        .language-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .language-stat {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .language-stat strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+        }
+
+        .language-stat span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .language-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .language-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .language-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .language-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .language-level {
+            color: #7c3aed;
+            font-weight: bold;
+        }
+
+        .language-cert {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .language-bar {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 30px;
+            overflow: hidden;
+        }
+
+        .language-fill {
+            height: 100%;
+            border-radius: 30px;
+            background: linear-gradient(90deg,
+                    #7c3aed,
+                    #0ea5e9);
+        }
+
+
+        /* ESTILOS NETWORK */
+
+        .network-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .network-stat {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .network-stat strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+        }
+
+        .network-stat span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .network-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .network-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .network-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .network-card h3 {
+            margin-bottom: 6px;
+            color: #0f172a;
+        }
+
+        .network-card p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .network-badge {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+
+        /* ESTILOS INTEREST */
+
+        .interest-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .interest-stat {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .interest-stat strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+        }
+
+        .interest-stat span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .interest-tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .interest-tag {
+            background: #ede9fe;
+            color: #4c1d95;
+            border: 1px solid #c4b5fd;
+            padding: 9px 13px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* ESTILO OTHER INFO */
+
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .preference-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .preference-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 22px;
+
+            background: linear-gradient(135deg,
+                    #7c3aed,
+                    #0ea5e9);
+
+            color: white;
+
+            margin-bottom: 12px;
+        }
+
+        .preference-card h3 {
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .preference-value {
+            color: #4c1d95;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .preference-description {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        /* ESTILOS WORK EXPERIENCE */
+
+        .experience-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .experience-stat,
+        .experience-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .experience-stat strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+        }
+
+        .experience-stat span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .experience-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .experience-card h3 {
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .experience-company {
+            color: #4c1d95;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .experience-period {
+            display: inline-block;
+            background: #ede9fe;
+            color: #4c1d95;
+            border: 1px solid #c4b5fd;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .experience-card p {
+            color: #334155;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .experience-card ul {
+            padding-left: 20px;
+            line-height: 1.7;
+        }
+
+        /* ESTILOS EDUCATION */
+
+        .education-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .education-stat,
+        .education-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .education-stat strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+        }
+
+        .education-stat span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .education-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .education-card h3 {
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+
+        .education-center {
+            color: #4c1d95;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .education-period {
+            display: inline-block;
+            background: #ede9fe;
+            color: #4c1d95;
+            border: 1px solid #c4b5fd;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* ESTILO FORMACION COMPLEMENTARIA */
+
+        .training-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .training-stat {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .training-stat strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+        }
+
+        .training-stat span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .training-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .training-type {
+            display: inline-block;
+
+            background: #ede9fe;
+            color: #4c1d95;
+
+            border: 1px solid #c4b5fd;
+
+            padding: 5px 9px;
+
+            border-radius: 999px;
+
+            font-size: 12px;
+            font-weight: bold;
+
+            margin-bottom: 10px;
+        }
+
+        .training-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .training-entity {
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .training-year {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* ESTILO PROYECTOS */
+
+        .project-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .project-stat,
+        .project-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .project-stat strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+        }
+
+        .project-stat span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .project-card h3 {
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .project-tech {
+            color: #4c1d95;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .project-desc {
+            color: #334155;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .project-link {
+            display: inline-block;
+            color: white;
+            background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+            padding: 8px 12px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* ESTILOS ACHIVEMENTS */
+
+        .achievement-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .achievement-stat {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .achievement-stat strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+        }
+
+        .achievement-stat span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .achievement-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .achievement-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+
+            display: flex;
+            gap: 16px;
+        }
+
+        .achievement-icon {
+            width: 54px;
+            height: 54px;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 24px;
+
+            background: linear-gradient(135deg,
+                    #7c3aed,
+                    #0ea5e9);
+
+            color: white;
+
+            flex-shrink: 0;
+        }
+
+        .achievement-content h3 {
+            margin-bottom: 6px;
+            color: #0f172a;
+        }
+
+        .achievement-meta {
+            color: #4c1d95;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .achievement-desc {
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        /* ESTILOS ACHIVEMENTS */
+
+        .volunteering-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .volunteering-stat,
+        .volunteering-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .volunteering-stat strong {
+            display: block;
+            font-size: 28px;
+            color: #4c1d95;
+        }
+
+        .volunteering-stat span {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .volunteering-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .volunteering-card h3 {
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .volunteering-org {
+            color: #4c1d95;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .volunteering-impact {
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        /* ESTILO AL ENTRAR AL CV */
+
+        .welcome-screen {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .welcome-card {
+            background: white;
+            border: 1px solid #dbe4f0;
+            border-radius: 18px;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 32px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .welcome-photo {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            overflow: hidden;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                radial-gradient(circle at 25% 25%, rgba(255, 0, 0, 0.65), transparent 35%),
+                radial-gradient(circle at 70% 30%, rgba(255, 255, 0, 0.65), transparent 35%),
+                radial-gradient(circle at 40% 75%, rgba(0, 255, 255, 0.55), transparent 35%),
+                linear-gradient(135deg, #312e81, #7c3aed, #0ea5e9);
+
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+        }
+
+        .welcome-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .welcome-label {
+            color: #7c3aed;
+            font-family: Consolas, monospace;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .welcome-info h1 {
+            font-size: 38px;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .welcome-info h2 {
+            font-size: 20px;
+            color: #4c1d95;
+            margin-bottom: 18px;
+        }
+
+        .welcome-info p {
+            color: #475569;
+            line-height: 1.7;
+        }
+
+        .welcome-actions {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .welcome-actions span {
+            background: #f8fafc;
+            border: 1px solid #dbe4f0;
+            border-left: 4px solid #7c3aed;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        .welcome-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .welcome-tags span {
+            background: #ede9fe;
+            color: #4c1d95;
+            border: 1px solid #c4b5fd;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .welcome-terminal {
+            margin-top: 18px;
+            background: #0f172a;
+            color: #d1fae5;
+            border-radius: 14px;
+            padding: 18px 20px;
+            font-family: Consolas, monospace;
+            line-height: 1.7;
+        }
+
+        .terminal-green {
+            color: #5eead4;
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .welcome-card {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-photo {
+                width: 180px;
+                height: 180px;
+                margin: 0 auto;
+            }
+        }
+
+        /* ESTILOS DE ASISTENTE IA */
+
+        .ai-panel {
+            width: 300px;
+            background: #f8fafc;
+            border-left: 1px solid #dbe4f0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .ai-header {
+            height: 48px;
+            background: white;
+            border-bottom: 1px solid #dbe4f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 14px;
+            color: #4c1d95;
+            font-size: 15px;
+        }
+
+        .ai-body {
+            flex: 1;
+            padding: 14px;
+            overflow-y: auto;
+        }
+
+        .ai-message {
+            max-width: 92%;
+            padding: 11px 13px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .ai-message p {
+            margin-bottom: 4px;
+        }
+
+        .ai-assistant {
+            background: white;
+            border: 1px solid #dbe4f0;
+            color: #334155;
+            border-top-left-radius: 4px;
+        }
+
+        .ai-user {
+            background: #ede9fe;
+            border: 1px solid #c4b5fd;
+            color: #4c1d95;
+            margin-left: auto;
+            border-top-right-radius: 4px;
+        }
+
+        .ai-section-title {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: bold;
+            margin: 16px 0 8px;
+        }
+
+        .ai-quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .ai-quick-actions button {
+            border: 1px solid #c4b5fd;
+            background: white;
+            color: #4c1d95;
+            padding: 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .ai-quick-actions button:hover {
+            background: #ede9fe;
+        }
+
+        .ai-input-area {
+            border-top: 1px solid #dbe4f0;
+            background: white;
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .ai-input-area input {
+            flex: 1;
+            border: 1px solid #cbd5e1;
+            border-radius: 999px;
+            padding: 9px 12px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .ai-input-area input:focus {
+            border-color: #7c3aed;
+        }
+
+        .ai-input-area button {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1100px) {
+            .ai-panel {
+                display: none;
+            }
+        }
+
+
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1200px) {
+            .ai-panel {
+                display: none;
+            }
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .welcome-card,
+            .profile-result,
+            .profile-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+
+
+        @media (max-width: 768px) {
+            body {
+                overflow: auto;
+            }
+
+            .app {
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .topbar {
+                height: auto;
+                flex-wrap: wrap;
+                padding: 12px;
+            }
+
+            .menus,
+            .top-actions {
+                display: none;
+            }
+
+            .toolbar {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .main {
+                flex-direction: column;
+            }
+
+            .activity {
+                width: 100%;
+                height: 44px;
+                flex-direction: row;
+                justify-content: center;
+                padding: 0;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: 260px;
+                height: auto;
+            }
+
+            .workspace {
+                min-height: 600px;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .notebook {
+                padding: 18px 12px 120px;
+            }
+
+            .colab-cell {
+                grid-template-columns: 32px 1fr;
+            }
+
+            .code-input {
+                font-size: 12px;
+                max-height: 120px;
+            }
+
+            .terminal {
+                height: auto;
+                min-height: 90px;
+            }
+
+            .statusbar {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+
+
+
+        @media (max-width: 480px) {
+            .cv-icon {
+                width: 30px;
+                height: 30px;
+            }
+
+            .file-title h1 {
+                font-size: 16px;
+            }
+
+            .cell {
+                padding: 14px;
+            }
+
+            .welcome-photo,
+            .heatmap-photo {
+                width: 150px;
+                height: 150px;
+                font-size: 52px;
+            }
+
+            .info-grid-output,
+            .skills-dashboard,
+            .project-grid,
+            .training-grid,
+            .education-summary,
+            .experience-summary,
+            .achievement-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ESTILO DESCARGAR PDF */
+
+        .pdf-btn {
+            border: none;
+            background: #7c3aed;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @media print {
+
+            .topbar,
+            .toolbar,
+            .activity,
+            .sidebar,
+            .tabs,
+            .terminal,
+            .statusbar,
+            .ai-panel,
+            .run-btn,
+            .execution-count {
+                display: none !important;
+            }
+
+            body {
+                overflow: visible;
+                background: white;
+            }
+
+            .app,
+            .main,
+            .workspace,
+            .notebook {
+                height: auto;
+                overflow: visible;
+                display: block;
+                background: white;
+            }
+
+            .notebook {
+                padding: 0;
+            }
+
+            .cell-output {
+                display: block !important;
+            }
+
+            .code-input,
+            .cell-top {
+                display: none;
+            }
+
+            .output-section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <header class="topbar">
+            <div class="cv-icon">CV</div>
+
+            <div class="file-title">
+                <h1>{{ profile.slug }}.ipynb ☆ ☁</h1>
+                <div class="menus">
+                    <span>Archivo</span>
+                    <span>Editar</span>
+                    <span>Ver</span>
+                    <span>Insertar</span>
+                    <span>Entorno de ejecución</span>
+                    <span>Herramientas</span>
+                    <span>Ayuda</span>
+                </div>
+            </div>
+
+            <div class="top-actions">
+                <span>☁</span>
+                <span>⚙</span>
+                <button class="share">👥 Compartir</button>
+                <div class="avatar">
+
+                    {% if profile.cv.personal_info.foto %}
+                    <img src="{{ profile.cv.personal_info.foto.url }}" alt="{{ profile.cv.personal_info.nombre }}">
+                    {% else %}
+                    {{ profile.cv.personal_info.nombre|first }}
+                    {% endif %}
+
+                </div>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <div class="command">🔍 Comandos</div>
+            <span>+ Código</span>
+            <span>+ Texto</span>
+            <strong>▶ Ejecutar todas</strong>
+            <button class="pdf-btn" onclick="downloadPDF()">📄 Descargar PDF</button>
+            <div class="connect">Conectar ▾</div>
+        </div>
+
+        <div class="main">
+
+            <nav class="activity">
+                <span>🧬</span>
+                <span>📁</span>
+                <span>🔎</span>
+                <span>⚙️</span>
+                <span>💻</span>
+            </nav>
+
+            <aside class="sidebar">
+
+                <div class="explorer-title">BIOCODE EXPLORER</div>
+
+                <div class="folder-header" onclick="toggleFolder('cvFolder', this)">
+                    <span>▸</span> CV_WORKSPACE
+                </div>
+
+                <div id="cvFolder" class="folder-content closed">
+                    <div class="file-item active" onclick="openFile('personal_data.py')">🐍 personal_data.py</div>
+                    <div class="file-item" onclick="openFile('professional_profile.html')">🌐 professional_profile.html</div>
+                    <div class="file-item" onclick="openFile('skills.ipynb')">📊 skills.ipynb</div>
+                    <div class="file-item" onclick="openFile('experience.ipynb')">💼 experience.ipynb</div>
+                    <div class="file-item" onclick="openFile('education.md')">🎓 education.md</div>
+                    <div class="file-item" onclick="openFile('training.yml')">📚 training.yml</div>
+                    <div class="file-item" onclick="openFile('projects.js')">🚀 projects.js</div>
+                    <div class="file-item" onclick="openFile('achievements.ipynb')">🏆 achievements.ipynb</div>
+                </div>
+
+                <div class="folder-header" onclick="toggleFolder('contactFolder', this)">
+                    <span>▸</span> CONTACT
+                </div>
+
+                <div id="contactFolder" class="folder-content closed">
+                    <div class="file-item" onclick="openFile('networks.json')">🔗 networks.json</div>
+                </div>
+
+                <div class="folder-header" onclick="toggleFolder('extraFolder', this)">
+                    <span>▸</span> EXTRA_INFO
+                </div>
+
+                <div id="extraFolder" class="folder-content closed">
+                    <div class="file-item" onclick="openFile('languages.yml')">🌍 languages.yml</div>
+                    <div class="file-item" onclick="openFile('interests.json')">⭐ interests.json</div>
+                    <div class="file-item" onclick="openFile('volunteering.txt')">🤝 volunteering.txt</div>
+                    <div class="file-item" onclick="openFile('preferences.config')">⚙️ preferences.config</div>
+                </div>
+
+            </aside>
+
+            <section class="workspace">
+
+                <div id="tabs" class="tabs"></div>
+
+                <main id="content" class="notebook"></main>
+
+                <div class="terminal">
+                    <div class="terminal-tabs">
+                        <span>TERMINAL</span>
+                        <span>PROBLEMAS</span>
+                        <span>SALIDA</span>
+                        <span>CONSOLA DE DEPURACIÓN</span>
+                    </div>
+
+                    <div>
+                        <strong style="color:#5eead4;">{{ profile.slug }}@BioCodeCV:~$</strong> npm run portfolio<br>
+                        Inicializando CV interactivo...
+                    </div>
+                </div>
+
+            </section>
+
+            <aside class="ai-panel">
+
+                <div class="ai-header">
+                    <span>🧠</span>
+                    <strong>BioCode AI</strong>
+                </div>
+
+                <div class="ai-body" id="aiBody">
+
+                    <div class="ai-message ai-assistant">
+                        <p>Hola 👋</p>
+                        <p>Soy el asistente del portfolio.</p>
+                        <p>Puedo ayudarte a explorar este CV interactivo.</p>
+                    </div>
+
+                    <div class="ai-section-title">
+                        Preguntas rápidas:
+                    </div>
+
+                    <div class="ai-quick-actions">
+                        <button onclick="askAI('profile')">Profile</button>
+                        <button onclick="askAI('skills')">Skills</button>
+                        <button onclick="askAI('projects')">Projects</button>
+                        <button onclick="askAI('experience')">Experience</button>
+                        <button onclick="askAI('education')">Education</button>
+                    </div>
+
+                    <div class="ai-message ai-user">
+                        Tell me about this candidate
+                    </div>
+
+                </div>
+
+                <div class="ai-input-area">
+                    <input id="aiInput" type="text" placeholder="Ask BioCode AI..." onkeydown="handleAIKey(event)">
+                    <button onclick="sendAIMessage()">➤</button>
+                </div>
+
+            </aside>
+
+        </div>
+
+        <footer class="statusbar">
+            <span>main</span>
+            <span>✓ Proyecto sin errores</span>
+            <span>UTF-8</span>
+
+            <div class="right">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>Biocode CV</span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- 
+    =====================================================
+    CONTENIDO HARDCODEADO DEL CV
+    Toda la información editable del CV está aquí, en HTML.
+    Luego podrás sustituir estos datos por variables de Django.
+    =====================================================
+  -->
+
+    <template data-file="personal_data.py">
+
+        <div class="colab-cell">
+
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>Python · personal_data.py</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment"># personal_data.py </span>
+
+from biocodecv.bioinformatics import (
+    generate_profile_heatmap,
+    candidate_metadata
+)
+
+candidate = candidate_metadata()
+
+heatmap = generate_profile_heatmap(
+    candidate.image
+)
+
+profile_summary = {
+
+    "candidate":
+        candidate.full_name,
+
+    "specialization":
+        candidate.profession,
+
+    "location":
+        candidate.location,
+
+    "availability":
+        candidate.availability,
+
+    "contact":
+        candidate.email
+
+}
+
+profile_summary</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · profile.html
+                        </div>
+                        <div class="profile-summary">
+
+                            <div class="profile-heatmap">
+
+                                <div class="heatmap-photo">
+                                    <img src="{{ profile.cv.personal_info.foto }}"
+                                        alt="{{ profile.cv.personal_info.nombre }}">
+                                </div>
+
+                                <div class="heatmap-caption">
+                                    Profile Heatmap
+                                </div>
+
+                            </div>
+
+                            <div class="profile-summary-text">
+                                <h2>
+                                    {{ profile.cv.personal_info.nombre }}
+                                    {{ profile.cv.personal_info.apellidos }}
+                                </h2>
+
+                                <p class="profile-short-description">
+                                    Personal Information Dashboard
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="output-section">
+                        <div class="info-grid-output">
+
+                            <div class="info-card">
+                                <strong>Nombre</strong>
+                                <span>{{ profile.cv.personal_info.nombre }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Apellidos</strong>
+                                <span>{{ profile.cv.personal_info.apellidos }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Teléfono 1</strong>
+                                <span>{{ profile.cv.personal_info.telefono1 }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Teléfono 2</strong>
+                                <span>{{ profile.cv.personal_info.telefono2 }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Email profesional 1</strong>
+                                <span>{{ profile.cv.personal_info.email_profesional1 }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Email profesional 2</strong>
+                                <span>{{ profile.cv.personal_info.email_profesional2 }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Ciudad</strong>
+                                <span>{{ profile.cv.personal_info.ciudad }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>País</strong>
+                                <span>{{ profile.cv.personal_info.pais }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Código postal</strong>
+                                <span>{{ profile.cv.personal_info.codigo_postal }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Fecha de nacimiento</strong>
+                                <span>{{ profile.cv.personal_info.fecha_nacimiento }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Nacionalidad</strong>
+                                <span>{{ profile.cv.personal_info.nacionalidad }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Carnet de conducir</strong>
+                                <span>{{ profile.cv.personal_info.carnet_conducir }}</span>
+                            </div>
+
+                            <div class="info-card">
+                                <strong>Disponibilidad</strong>
+                                <span>{{ profile.cv.personal_info.disponibilidad }}</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+    <template data-file="professional_profile.html">
+
+        <div class="colab-cell">
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>HTML · professional_profile.html</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment">&lt;!-- professional_profile.html --&gt;</span>
+<span class="code-comment">&lt;!-- Professional Profile Section --&gt;</span>
+
+&lt;section class="professional-profile"&gt;
+
+  &lt;div class="profile-badge"&gt;
+    ABOUT ME
+  &lt;/div&gt;
+
+  &lt;h1&gt;
+    {{ profile.cv.professional_profile.profesion }}
+  &lt;/h1&gt;
+
+  {% if profile.cv.professional_profile.objetivo %}
+
+    &lt;h2&gt;
+      {{ profile.cv.professional_profile.objetivo }}
+    &lt;/h2&gt;
+
+  {% endif %}
+
+  &lt;p&gt;
+    {{ profile.cv.professional_profile.resumen }}
+  &lt;/p&gt;
+
+&lt;/section&gt;</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · professional_profile rendered successfully
+                        </div>
+
+                        <div class="profile-summary-text">
+                            <h2>Professional Profile</h2>
+
+                            <p>
+                                {{ profile.cv.professional_profile.resumen }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="info-grid-output">
+
+                            <div class="info-grid-output">
+
+                                <div class="info-card">
+                                    <strong>Profesión / Especialidad</strong>
+                                    <span>
+                                        {{ profile.cv.professional_profile.profesion }}
+                                    </span>
+                                </div>
+
+                                {% if profile.cv.professional_profile.objetivo %}
+
+                                <div class="info-card">
+                                    <strong>Objetivo profesional</strong>
+                                    <span>
+                                        {{ profile.cv.professional_profile.objetivo }}
+                                    </span>
+                                </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </template>
+
+    <template data-file="skills.ipynb">
+
+        <div class="colab-cell">
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>Notebook · skills.ipynb</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment"># skills.ipynb</span>
+<span class="code-comment"># Generate skills dashboard from user profile</span>
+
+def generate_skill_dashboard(skills):
+
+    hard_skills = [
+        s for s in skills
+        if s.tipo == "hard"
+    ]
+
+    soft_skills = [
+        s for s in skills
+        if s.tipo == "soft"
+    ]
+
+    return {
+        "hard_skills": len(hard_skills),
+        "soft_skills": len(soft_skills),
+        "technical_score": calculate_score(hard_skills)
+    }
+
+
+dashboard = generate_skill_dashboard(
+    profile.habilidades.all()
+)
+
+dashboard</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · skills.ipynb rendered successfully
+                        </div>
+
+                        <div class="skills-dashboard">
+
+                            <div class="skill-stat-card">
+                                <strong id="hardSkillCount">0</strong>
+                                <span>Hard skills</span>
+                            </div>
+
+                            <div class="skill-stat-card">
+                                <strong id="softSkillCount">0</strong>
+                                <span>Soft skills</span>
+                            </div>
+
+                            <div class="skill-stat-card">
+                                <strong>CV</strong>
+                                <span>Skill dashboard</span>
+                            </div>
+
+                        </div>
+
+                        <div class="skills-layout">
+
+                            <div class="hard-skills-list">
+
+                                {% for s in profile.habilidades.all %}
+                                {% if s.tipo == 'hard' %}
+
+                                <div class="skill-bar-row" data-hard-skill>
+                                    <div class="skill-bar-top">
+                                        <span>{{ s.nombre }}</span>
+
+                                        {% if s.nivel %}
+                                        <span>{{ s.nivel|floatformat:0 }}0%</span>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if s.nivel %}
+                                    <div class="skill-bar-track">
+                                        <div class="skill-bar-fill" style="width: {{ s.nivel|floatformat:0 }}0%;">
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                {% endif %}
+                                {% endfor %}
+
+                            </div>
+
+                            <div class="soft-skills-panel">
+                                <h3>Soft skills</h3>
+
+                                <div class="skill-tag-list">
+                                    {% for s in profile.habilidades.all %}
+                                    {% if s.tipo == 'soft' %}
+
+                                    <span class="skill-tag-sm" data-soft-skill>
+                                        {{ s.nombre }}
+                                    </span>
+
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+
+                                <div class="radar-card">
+                                    <h3>Skill areas</h3>
+
+                                    <div class="radar-wrap">
+
+                                        <svg class="radar-svg" viewBox="0 0 220 220">
+                                            <polygon points="110,20 188,65 188,155 110,200 32,155 32,65" fill="none"
+                                                stroke="#cbd5e1" stroke-width="1" />
+
+                                            <polygon points="110,45 166,78 166,142 110,175 54,142 54,78" fill="none"
+                                                stroke="#e2e8f0" stroke-width="1" />
+
+                                            <polygon points="110,70 144,90 144,130 110,150 76,130 76,90" fill="none"
+                                                stroke="#e2e8f0" stroke-width="1" />
+
+                                            <polygon points="110,32 178,70 168,148 110,184 48,148 60,72"
+                                                fill="rgba(124,58,237,0.28)" stroke="#7c3aed" stroke-width="3" />
+
+                                            <circle cx="110" cy="32" r="4" fill="#7c3aed" />
+                                            <circle cx="178" cy="70" r="4" fill="#7c3aed" />
+                                            <circle cx="168" cy="148" r="4" fill="#7c3aed" />
+                                            <circle cx="110" cy="184" r="4" fill="#7c3aed" />
+                                            <circle cx="48" cy="148" r="4" fill="#7c3aed" />
+                                            <circle cx="60" cy="72" r="4" fill="#7c3aed" />
+
+                                            <text x="110" y="14" text-anchor="middle" font-size="11"
+                                                fill="#475569">Technical</text>
+                                            <text x="200" y="67" text-anchor="middle" font-size="11"
+                                                fill="#475569">Analysis</text>
+                                            <text x="200" y="160" text-anchor="middle" font-size="11"
+                                                fill="#475569">Communication</text>
+                                            <text x="110" y="216" text-anchor="middle" font-size="11"
+                                                fill="#475569">Learning</text>
+                                            <text x="18" y="160" text-anchor="middle" font-size="11"
+                                                fill="#475569">Tools</text>
+                                            <text x="20" y="67" text-anchor="middle" font-size="11" fill="#475569">Soft
+                                                Skills</text>
+                                        </svg>
+
+                                        <div class="radar-legend">
+
+                                            <span><strong>Technical:</strong> Dynamic</span>
+
+                                            <span><strong>Analysis:</strong> Dynamic</span>
+
+                                            <span><strong>Tools:</strong> Dynamic</span>
+
+                                            <span><strong>Learning:</strong> Dynamic</span>
+
+                                            <span><strong>Communication:</strong> Dynamic</span>
+
+                                            <span><strong>Soft Skills:</strong> Dynamic</span>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </template>
+
+    <template data-file="experience.ipynb">
+
+        <div class="colab-cell">
+
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>Notebook · experience.ipynb</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment"># experience.ipynb</span>
+<span class="code-comment"># Generate professional experience timeline</span>
+
+def build_experience_timeline(profile):
+
+    experiences = profile.experiencias.all()
+
+    timeline = []
+
+    for exp in experiences:
+
+        item = {
+            "position": exp.puesto,
+            "company": exp.empresa,
+            "location": exp.ubicacion,
+            "period": exp.periodo,
+            "description": exp.descripcion,
+            "achievements": []
+        }
+
+        if exp.logros:
+            item["achievements"] = [
+                logro
+                for logro in exp.logros.splitlines()
+                if logro
+            ]
+
+        timeline.append(item)
+
+    return timeline
+
+
+if profile.experiencias.exists():
+
+    experience_timeline = build_experience_timeline(profile)
+
+    experience_summary = {
+        "total_experiences": len(experience_timeline),
+        "has_achievements": True,
+        "display_mode": "professional_timeline"
+    }
+
+experience_summary</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · experience.ipynb rendered successfully
+                        </div>
+
+                        <div class="experience-summary">
+
+                            <div class="experience-stat">
+                                <strong id="experienceCount">0</strong>
+                                <span>Experiences</span>
+                            </div>
+
+                            <div class="experience-stat">
+                                <strong>ON</strong>
+                                <span>Achievements</span>
+                            </div>
+
+                            <div class="experience-stat">
+                                <strong>Timeline</strong>
+                                <span>Display mode</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="experience-timeline">
+
+                            {% for exp in profile.experiencias.all %}
+
+                            <div class="experience-card" data-experience-item>
+
+                                <h3>
+                                    {{ exp.puesto }}
+                                </h3>
+
+                                <div class="experience-company">
+                                    {{ exp.empresa }}
+
+                                    {% if exp.ubicacion %}
+                                    · {{ exp.ubicacion }}
+                                    {% endif %}
+                                </div>
+
+                                <div class="experience-period">
+                                    {{ exp.periodo }}
+                                </div>
+
+                                {% if exp.descripcion %}
+                                <p>
+                                    {{ exp.descripcion|linebreaksbr }}
+                                </p>
+                                {% endif %}
+
+                                {% if exp.logros %}
+                                <ul>
+                                    {% for logro in exp.logros.splitlines %}
+                                    {% if logro %}
+                                    <li>{{ logro }}</li>
+                                    {% endif %}
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+    <template data-file="education.md">
+
+        <div class="colab-cell">
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>Markdown · education.md</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment"># education.md</span>
+
+# Academic Timeline
+
+{% for edu in profile.educaciones.all %}
+
+## Education Record
+
+- Title: {{ edu.titulo }}
+- Institution: {{ edu.centro }}
+{% if edu.ubicacion %}
+- Location: {{ edu.ubicacion }}
+{% endif %}
+- Period: {{ edu.periodo }}
+
+---
+
+{% endfor %}</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · education.md rendered successfully
+                        </div>
+
+                        <div class="education-summary">
+
+                            <div class="education-stat">
+                                <strong id="educationCount">0</strong>
+                                <span>Academic records</span>
+                            </div>
+
+                            <div class="education-stat">
+                                <strong>MD</strong>
+                                <span>Format</span>
+                            </div>
+
+                            <div class="education-stat">
+                                <strong>ON</strong>
+                                <span>Visibility</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="education-list">
+
+                            {% for edu in profile.educaciones.all %}
+
+                            <div class="education-card" data-education-item>
+
+                                <h3>
+                                    {{ edu.titulo }}
+                                </h3>
+
+                                <div class="education-center">
+                                    {{ edu.centro }}
+
+                                    {% if edu.ubicacion %}
+                                    · {{ edu.ubicacion }}
+                                    {% endif %}
+                                </div>
+
+                                <span class="education-period">
+                                    {{ edu.periodo }}
+                                </span>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </template>
+
+    <template data-file="training.yml">
+
+        <div class="colab-cell">
+
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>YAML · training.yml</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment"># training.yml</span>
+<span class="code-comment"># Complementary training configuration</span>
+
+training:
+
+{% for formacion in profile.formaciones.all %}
+
+  - type: "{{ formacion.get_tipo_display }}"
+    name: "{{ formacion.nombre }}"
+    {% if formacion.entidad %}
+    entity: "{{ formacion.entidad }}"
+    {% endif %}
+    {% if formacion.fecha %}
+    year: "{{ formacion.fecha|date:"Y" }}"
+    {% endif %}
+
+{% endfor %}
+
+display:
+
+  show_section: true
+  visualization: "training_grid"
+  sort_by: "year"
+  group_by: "type"</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · training.yml rendered successfully
+                        </div>
+
+                        <div class="training-summary">
+
+                            <div class="training-stat">
+                                <strong id="trainingCount">0</strong>
+                                <span>Training records</span>
+                            </div>
+
+                            <div class="training-stat">
+                                <strong>Types</strong>
+                                <span>Training categories</span>
+                            </div>
+
+                            <div class="training-stat">
+                                <strong>YAML</strong>
+                                <span>Format</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="training-grid">
+
+                            {% for formacion in profile.formaciones.all %}
+
+                            <div class="training-card" data-training-item>
+
+                                <div class="training-type">
+                                    {{ formacion.get_tipo_display }}
+                                </div>
+
+                                <div class="training-name">
+                                    {{ formacion.nombre }}
+                                </div>
+
+                                {% if formacion.entidad %}
+                                <div class="training-entity">
+                                    {{ formacion.entidad }}
+                                </div>
+                                {% endif %}
+
+                                {% if formacion.fecha %}
+                                <div class="training-year">
+                                    {{ formacion.fecha|date:"Y" }}
+                                </div>
+                                {% endif %}
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+    <template data-file="projects.js">
+
+        <div class="colab-cell">
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>JavaScript · projects.js</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment">// projects.js</span>
+<span class="code-comment">// Generate reusable project portfolio cards</span>
+
+function buildProjectPortfolio(projects) {
+
+  return projects.map(project => ({
+
+    name: project.nombre,
+
+    technologies: project.tecnologias,
+
+    description: truncate(
+      project.descripcion,
+      120
+    ),
+
+    link: project.link,
+
+    visible: Boolean(project.nombre)
+  }));
+}
+
+
+const portfolioProjects = buildProjectPortfolio(
+  profile.proyectos.all()
+);
+
+renderProjectGrid(portfolioProjects);</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+                        <div class="output-title">
+                            Output · projects.js rendered successfully
+                        </div>
+
+                        <div class="project-summary">
+
+                            <div class="project-stat">
+                                <strong id="projectCount">0</strong>
+                                <span>Featured projects</span>
+                            </div>
+
+                            <div class="project-stat">
+                                <strong>Tech</strong>
+                                <span>Technologies</span>
+                            </div>
+
+                            <div class="project-stat">
+                                <strong>ON</strong>
+                                <span>External links</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="project-grid">
+
+                            {% for proj in profile.proyectos.all %}
+
+                            <div class="project-card" data-project-item>
+
+                                <h3>
+                                    {{ proj.nombre }}
+                                </h3>
+
+                                {% if proj.tecnologias %}
+                                <div class="project-tech">
+                                    🛠 {{ proj.tecnologias }}
+                                </div>
+                                {% endif %}
+
+                                {% if proj.descripcion %}
+                                <div class="project-desc">
+                                    {{ proj.descripcion|truncatechars:120 }}
+                                </div>
+                                {% endif %}
+
+                                {% if proj.link %}
+                                <a href="{{ proj.link }}" class="project-link" target="_blank" rel="noopener">
+                                    🔗 View project
+                                </a>
+                                {% endif %}
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </template>
+
+    <template data-file="achievements.ipynb">
+
+        <div class="colab-cell">
+
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>Notebook · achievements.ipynb</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment"># achievements.ipynb</span>
+<span class="code-comment"># Generate achievement timeline from user profile</span>
+
+def build_achievement_timeline(profile):
+
+    achievements = profile.logros.all()
+
+    timeline = []
+
+    for logro in achievements:
+
+        timeline.append({
+
+            "title":
+                logro.titulo,
+
+            "type":
+                logro.tipo,
+
+            "label":
+                logro.get_tipo_display(),
+
+            "year":
+                logro.fecha,
+
+            "description":
+                logro.descripcion
+
+        })
+
+    return timeline
+
+
+if profile.mostrar_logros and profile.logros.exists():
+
+    achievement_timeline = (
+        build_achievement_timeline(profile)
+    )
+
+    achievement_summary = {
+        "total_achievements": len(achievement_timeline),
+        "display_mode": "achievement_timeline"
+    }
+
+achievement_summary</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · achievements.ipynb rendered successfully
+                        </div>
+
+                        <div class="achievement-summary">
+
+                            <div class="achievement-stat">
+                                <strong id="achievementCount">0</strong>
+                                <span>Total achievements</span>
+                            </div>
+
+                            <div class="achievement-stat">
+                                <strong>Types</strong>
+                                <span>Awards · Merits · Events</span>
+                            </div>
+
+                            <div class="achievement-stat">
+                                <strong>Timeline</strong>
+                                <span>Display mode</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="achievement-timeline">
+
+                            {% for logro in profile.logros.all %}
+
+                            <div class="achievement-card" data-achievement-item>
+
+                                <div class="achievement-icon">
+
+                                    {% if logro.tipo == 'premio' %}
+                                    🏆
+                                    {% elif logro.tipo == 'merito' %}
+                                    🎓
+                                    {% elif logro.tipo == 'evento' %}
+                                    🎯
+                                    {% else %}
+                                    ⭐
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="achievement-content">
+
+                                    <h3>
+                                        {{ logro.titulo }}
+                                    </h3>
+
+                                    <div class="achievement-meta">
+                                        {{ logro.get_tipo_display }}
+
+                                        {% if logro.fecha %}
+                                        · {{ logro.fecha|date:"Y" }}
+                                        {% endif %}
+                                    </div>
+
+                                    {% if logro.descripcion %}
+                                    <div class="achievement-desc">
+                                        {{ logro.descripcion }}
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+
+    <template data-file="networks.json">
+
+        <div class="colab-cell">
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>JSON · networks.json</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment">// networks.json</span>
+<span class="code-comment">// Digital presence configuration</span>
+
+{
+  "show_networks": "{{ profile.mostrar_redes }}",
+
+  "social_networks": {
+    "linkedin": "{{ profile.cv.social_networks.linkedin }}",
+    "github": "{{ profile.cv.social_networks.github }}",
+    "portfolio": "{{ profile.cv.social_networks.portfolio }}"
+  },
+
+  "display_rules": {
+    "show_only_if_enabled": true,
+    "hide_empty_links": true,
+    "open_in_new_tab": true
+  }
+}</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+                        <div class="output-title">
+                            Output · networks.json rendered successfully
+                        </div>
+
+                        <div class="network-summary">
+
+                            <div class="network-stat">
+                                <strong id="networkCount">0</strong>
+                                <span>Registered networks</span>
+                            </div>
+
+                            <div class="network-stat">
+                                <strong>ON</strong>
+                                <span>Visibility</span>
+                            </div>
+
+                            <div class="network-stat">
+                                <strong>100%</strong>
+                                <span>Digital presence</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="network-grid">
+
+                            {% if profile.mostrar_redes %}
+
+                            {% with sn=profile.cv.social_networks %}
+
+                            {% if sn %}
+
+                            {% if sn.linkedin %}
+                            <a href="{{ sn.linkedin }}" target="_blank" rel="noopener" class="network-card"
+                                data-network-item>
+
+                                <div class="network-icon">in</div>
+
+                                <h3>LinkedIn</h3>
+
+                                <p>
+                                    Professional profile, experience and career network.
+                                </p>
+
+                                <span class="network-badge">Visible</span>
+
+                            </a>
+                            {% endif %}
+
+                            {% if sn.github %}
+                            <a href="{{ sn.github }}" target="_blank" rel="noopener" class="network-card"
+                                data-network-item>
+
+                                <div class="network-icon">⌥</div>
+
+                                <h3>GitHub</h3>
+
+                                <p>
+                                    Code repositories, technical projects and portfolio evidence.
+                                </p>
+
+                                <span class="network-badge">Visible</span>
+
+                            </a>
+                            {% endif %}
+
+                            {% if sn.portfolio %}
+                            <a href="{{ sn.portfolio }}" target="_blank" rel="noopener" class="network-card"
+                                data-network-item>
+
+                                <div class="network-icon">🌐</div>
+
+                                <h3>Portfolio</h3>
+
+                                <p>
+                                    Personal website with selected projects and professional information.
+                                </p>
+
+                                <span class="network-badge">Visible</span>
+
+                            </a>
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endwith %}
+
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </template>
+
+    <template data-file="languages.yml">
+
+        <div class="colab-cell">
+
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>YAML · languages.yml</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment"># languages.yml</span>
+<span class="code-comment"># Language configuration for user profile</span>
+
+languages:
+
+{% for lang in profile.idiomas.all %}
+
+  - language: "{{ lang.idioma }}"
+    level: "{{ lang.get_nivel_display }}"
+    {% if lang.certificacion %}
+    certification: "{{ lang.certificacion }}"
+    {% endif %}
+
+{% endfor %}
+
+display:
+  show_level: true
+  show_certification: true
+  visualization: "language_dashboard"</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · languages.yml rendered successfully
+                        </div>
+
+                        <div class="language-summary">
+
+                            <div class="language-stat">
+                                <strong id="languageCount">0</strong>
+                                <span>Languages</span>
+                            </div>
+
+                            <div class="language-stat">
+                                <div class="language-stat">
+                                    <strong id="certificationCount">0</strong>
+                                    <span>Certifications</span>
+                                </div>
+                            </div>
+
+                            <div class="language-stat">
+                                <strong>Level</strong>
+                                <span>Highest level</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="language-list">
+
+                            {% for lang in profile.idiomas.all %}
+
+                            <div class="language-card" data-language-item>
+
+                                <div class="language-top">
+                                    <div class="language-name">
+                                        {{ lang.idioma }}
+                                    </div>
+
+                                    <div class="language-level">
+                                        {{ lang.get_nivel_display }}
+                                    </div>
+                                </div>
+
+                                {% if lang.certificacion %}
+                                <div class="language-cert" data-certification-item>
+                                    {{ lang.certificacion }}
+                                </div>
+                                {% endif %}
+
+                                <div class="language-bar">
+                                    <div class="language-fill" data-language-level="{{ lang.get_nivel_display }}">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+    <template data-file="interests.json">
+
+        <div class="colab-cell">
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>JSON · interests.json</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment">// interests.json</span>
+<span class="code-comment">// Reusable interests configuration</span>
+
+{
+  "show_interests": "{{ profile.mostrar_intereses }}",
+
+  "display_rules": {
+    "show_section_only_if_enabled": true,
+    "hide_section_if_empty": true,
+    "render_as": "tag_cloud"
+  },
+
+  "interests": [
+    {% for interes in profile.intereses.all %}
+    {
+      "name": "{{ interes.nombre }}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+                        <div class="output-title">
+                            Output · interests.json rendered successfully
+                        </div>
+
+                        <div class="interest-summary">
+
+                            <div class="interest-stat">
+                                <strong id="interestCount">0</strong>
+                                <span>Total interests</span>
+                            </div>
+
+                            <div class="interest-stat">
+                                <strong>ON</strong>
+                                <span>Visibility</span>
+                            </div>
+
+                            <div class="interest-stat">
+                                <strong>Tags</strong>
+                                <span>Display mode</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="interest-tag-cloud">
+
+                            {% for interes in profile.intereses.all %}
+
+                            <span class="interest-tag" data-interest-item>
+                                {{ interes.nombre }}
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </template>
+
+    <template data-file="volunteering.txt">
+
+        <div class="colab-cell">
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>Text · volunteering.txt</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment"># volunteering.txt</span>
+<span class="code-comment"># Volunteering and social impact section</span>
+
+Volunteering Experience
+
+{% for vol in profile.voluntariados.all %}
+
+Function:
+{{ vol.funcion }}
+
+Organization:
+{{ vol.organizacion }}
+
+{% if vol.impacto %}
+Impact:
+{{ vol.impacto }}
+{% endif %}
+
+---
+
+{% endfor %}
+
+Display rules:
+- Show section only if volunteering visibility is enabled.
+- Hide section if there are no volunteering experiences.
+- Render each volunteering experience as an impact card.</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+                        <div class="output-title">
+                            Output · volunteering.txt rendered successfully
+                        </div>
+
+                        <div class="volunteering-summary">
+
+                            <div class="volunteering-stat">
+                                <strong id="volunteeringCount">0</strong>
+                                <span>Volunteering records</span>
+                            </div>
+
+                            <div class="volunteering-stat">
+                                <strong>ON</strong>
+                                <span>Visibility</span>
+                            </div>
+
+                            <div class="volunteering-stat">
+                                <strong>Impact</strong>
+                                <span>Display mode</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="output-section">
+
+                        <div class="volunteering-list">
+
+                            {% for vol in profile.voluntariados.all %}
+
+                            <div class="volunteering-card" data-volunteering-item>
+
+                                <h3>
+                                    {{ vol.funcion }}
+                                </h3>
+
+                                <div class="volunteering-org">
+                                    {{ vol.organizacion }}
+                                </div>
+
+                                {% if vol.impacto %}
+                                <div class="volunteering-impact">
+                                    {{ vol.impacto }}
+                                </div>
+                                {% endif %}
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </template>
+
+    <template data-file="preferences.config">
+
+        <div class="colab-cell">
+
+            <div class="execution-count">[ ]</div>
+
+            <div class="cell-body">
+
+                <div class="cell-top">
+                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <span>CONFIG · preferences.config</span>
+                </div>
+
+                <pre class="code-input"><span class="code-comment"># preferences.config</span>
+<span class="code-comment"># Professional work preferences</span>
+
+[work_preferences]
+
+remote_work = "{{ oi.get_teletrabajo_display }}"
+
+travel_availability = "{% if oi.disponibilidad_viajar %}true{% else %}false{% endif %}"
+
+salary_expectation = "{{ oi.expectativa_salarial }}"
+
+visibility = "{{ profile.mostrar_otros }}"
+
+display_mode = "professional_preferences"</pre>
+
+                <div class="cell-output">
+
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · preferences.config rendered successfully
+                        </div>
+
+                        <div class="preferences-grid">
+
+                            {% if profile.mostrar_otros %}
+
+                            {% with oi=profile.cv.other_info %}
+
+                            {% if oi %}
+
+                            <div class="preference-card">
+
+                                <div class="preference-icon">
+                                    🏠
+                                </div>
+
+                                <h3>Teletrabajo</h3>
+
+                                <div class="preference-value">
+                                    {{ oi.get_teletrabajo_display }}
+                                </div>
+
+                                <div class="preference-description">
+                                    Modelo de trabajo preferido por el usuario.
+                                </div>
+
+                            </div>
+
+                            <div class="preference-card">
+
+                                <div class="preference-icon">
+                                    ✈️
+                                </div>
+
+                                <h3>Disponibilidad para viajar</h3>
+
+                                <div class="preference-value">
+                                    {% if oi.disponibilidad_viajar %}
+                                    Sí
+                                    {% else %}
+                                    No
+                                    {% endif %}
+                                </div>
+
+                                <div class="preference-description">
+                                    Indica si el usuario está disponible para viajes profesionales.
+                                </div>
+
+                            </div>
+
+                            {% if oi.expectativa_salarial %}
+
+                            <div class="preference-card">
+
+                                <div class="preference-icon">
+                                    💰
+                                </div>
+
+                                <h3>Expectativa salarial</h3>
+
+                                <div class="preference-value">
+                                    {{ oi.expectativa_salarial }}
+                                </div>
+
+                                <div class="preference-description">
+                                    Preferencia salarial indicada por el usuario.
+                                </div>
+
+                            </div>
+
+                            {% endif %}
+
+                            {% endif %}
+
+                            {% endwith %}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+    <script>
+        let activeFile = null;
+        let openTabs = [];
+
+        const content = document.getElementById("content");
+        const tabs = document.getElementById("tabs");
+
+        function getFileContent(file) {
+            const template = document.querySelector(`template[data-file="${file}"]`);
+            return template ? template.innerHTML : `
+        <div class="cell">
+          <div class="cell-label">[ Not Found ]</div>
+          <h2>Archivo no encontrado</h2>
+          <p>No existe contenido HTML para este archivo.</p>
+        </div>
+      `;
+        }
+
+        function renderContent(file) {
+            content.innerHTML = getFileContent(file);
+            activeFile = file;
+
+            document.querySelectorAll(".file-item").forEach(item => {
+                item.classList.remove("active");
+                if (item.textContent.includes(file)) {
+                    item.classList.add("active");
+                }
+            });
+
+            document.querySelectorAll(".tab").forEach(tab => {
+                tab.classList.remove("active");
+                if (tab.dataset.file === file) {
+                    tab.classList.add("active");
+                }
+            });
+
+            // Dashboards dinámicos
+
+            if (file === "skills.ipynb") {
+                updateSkillsDashboard();
+            }
+
+            if (file === "experience.ipynb") {
+                updateExperienceDashboard();
+            }
+
+            if (file === "education.md") {
+                updateEducationDashboard();
+            }
+
+            if (file === "training.yml") {
+                updateTrainingDashboard();
+            }
+
+            if (file === "projects.js") {
+                updateProjectDashboard();
+            }
+
+            if (file === "achievements.ipynb") {
+                updateAchievementDashboard();
+            }
+
+            if (file === "networks.json") {
+                updateNetworkDashboard();
+            }
+
+            if (file === "languages.yml") {
+                updateLanguageDashboard();
+            }
+
+            if (file === "interests.json") {
+                updateInterestDashboard();
+            }
+
+            if (file === "volunteering.txt") {
+                updateVolunteeringDashboard();
+            }
+        }
+
+        function updateSkillsDashboard() {
+
+            const hardSkills =
+                document.querySelectorAll(
+                    "[data-hard-skill]"
+                ).length;
+
+            const softSkills =
+                document.querySelectorAll(
+                    "[data-soft-skill]"
+                ).length;
+
+            const hardSkillCount =
+                document.getElementById(
+                    "hardSkillCount"
+                );
+
+            const softSkillCount =
+                document.getElementById(
+                    "softSkillCount"
+                );
+
+            if (hardSkillCount) {
+                hardSkillCount.textContent =
+                    hardSkills;
+            }
+
+            if (softSkillCount) {
+                softSkillCount.textContent =
+                    softSkills;
+            }
+        }
+
+        function updateExperienceDashboard() {
+
+            const experiences =
+                document.querySelectorAll(
+                    '[data-experience-item]'
+                ).length;
+
+            const experienceCount =
+                document.getElementById(
+                    "experienceCount"
+                );
+
+            if (experienceCount) {
+                experienceCount.textContent =
+                    experiences;
+            }
+        }
+
+        function updateEducationDashboard() {
+            const educations =
+                document.querySelectorAll(
+                    "[data-education-item]"
+                ).length;
+
+            const educationCount =
+                document.getElementById(
+                    "educationCount"
+                );
+
+            if (educationCount) {
+                educationCount.textContent =
+                    educations;
+            }
+        }
+
+        function updateTrainingDashboard() {
+            const trainings =
+                document.querySelectorAll(
+                    "[data-training-item]"
+                ).length;
+
+            const trainingCount =
+                document.getElementById(
+                    "trainingCount"
+                );
+
+            if (trainingCount) {
+                trainingCount.textContent = trainings;
+            }
+        }
+
+        function updateProjectDashboard() {
+            const projects =
+                document.querySelectorAll(
+                    "[data-project-item]"
+                ).length;
+
+            const projectCount =
+                document.getElementById(
+                    "projectCount"
+                );
+
+            if (projectCount) {
+                projectCount.textContent = projects;
+            }
+        }
+
+        function updateAchievementDashboard() {
+            const achievements =
+                document.querySelectorAll(
+                    "[data-achievement-item]"
+                ).length;
+
+            const achievementCount =
+                document.getElementById(
+                    "achievementCount"
+                );
+
+            if (achievementCount) {
+                achievementCount.textContent =
+                    achievements;
+            }
+        }
+
+        function updateNetworkDashboard() {
+            const networks =
+                document.querySelectorAll(
+                    "[data-network-item]"
+                ).length;
+
+            const networkCount =
+                document.getElementById(
+                    "networkCount"
+                );
+
+            if (networkCount) {
+                networkCount.textContent = networks;
+            }
+        }
+
+        function updateLanguageDashboard() {
+            const languages = document.querySelectorAll("[data-language-item]");
+            const certifications = document.querySelectorAll("[data-certification-item]");
+
+            const levelMap = {
+                "A1": 15,
+                "A2": 30,
+                "B1": 45,
+                "B2": 65,
+                "C1": 85,
+                "C2": 100,
+                "Nativo": 100
+            };
+
+            languages.forEach(card => {
+                const fill = card.querySelector(".language-fill");
+                if (!fill) return;
+
+                const levelText = fill.dataset.languageLevel || "";
+
+                let percent = 50;
+
+                Object.keys(levelMap).forEach(level => {
+                    if (levelText.includes(level)) {
+                        percent = levelMap[level];
+                    }
+                });
+
+                fill.style.width = percent + "%";
+            });
+
+            const languageCount = document.getElementById("languageCount");
+            const certificationCount = document.getElementById("certificationCount");
+
+            if (languageCount) {
+                languageCount.textContent = languages.length;
+            }
+
+            if (certificationCount) {
+                certificationCount.textContent = certifications.length;
+            }
+        }
+
+        function updateInterestDashboard() {
+            const interests =
+                document.querySelectorAll(
+                    "[data-interest-item]"
+                ).length;
+
+            const interestCount =
+                document.getElementById(
+                    "interestCount"
+                );
+
+            if (interestCount) {
+                interestCount.textContent = interests;
+            }
+        }
+
+        function updateVolunteeringDashboard() {
+            const volunteerings =
+                document.querySelectorAll(
+                    "[data-volunteering-item]"
+                ).length;
+
+            const volunteeringCount =
+                document.getElementById(
+                    "volunteeringCount"
+                );
+
+            if (volunteeringCount) {
+                volunteeringCount.textContent =
+                    volunteerings;
+            }
+        }
+
+        function openFile(file) {
+            if (!openTabs.includes(file)) {
+                openTabs.push(file);
+                createTab(file);
+            }
+
+            renderContent(file);
+        }
+
+        function createTab(file) {
+            const tab = document.createElement("div");
+            tab.className = "tab";
+            tab.dataset.file = file;
+            tab.onclick = () => selectTab(file);
+
+            tab.innerHTML = `
+        🔶 ${file}
+        <button onclick="closeTab(event, '${file}')">×</button>
+      `;
+
+            tabs.appendChild(tab);
+        }
+
+        function selectTab(file) {
+            renderContent(file);
+        }
+
+        function closeTab(event, file) {
+            event.stopPropagation();
+
+            openTabs = openTabs.filter(tab => tab !== file);
+
+            const tabElement = document.querySelector(`.tab[data-file="${file}"]`);
+            if (tabElement) {
+                tabElement.remove();
+            }
+
+            if (activeFile === file) {
+                if (openTabs.length > 0) {
+                    renderContent(openTabs[openTabs.length - 1]);
+                } else {
+                    content.innerHTML = `
+    <div class="welcome-screen">
+
+      <div class="welcome-card">
+
+        <div class="welcome-photo">
+          <img src="{{ profile.cv.personal_info.foto }}" alt="{{ profile.cv.personal_info.nombre }}">
+        </div>
+
+        <div class="welcome-info">
+          <p class="welcome-label">BioCodeCV · Interactive Portfolio</p>
+
+          <h1>Bienvenido a BioCodeCV</h1>
+
+          <h2>Entorno interactivo para descubrir el perfil profesional del candidato</h2>
+
+          <p>
+            Explora este currículum como si fuera un proyecto real de desarrollo.
+            Cada archivo del panel lateral representa una sección profesional:
+            perfil, experiencia, educación, habilidades, proyectos, idiomas y más.
+          </p>
+
+          <div class="welcome-actions">
+            <span>1. Abre una carpeta del explorador</span>
+            <span>2. Selecciona un archivo</span>
+            <span>3. Pulsa ▶ para ejecutar la celda</span>
+          </div>
+
+          <div class="welcome-tags">
+            <span>Profile</span>
+            <span>Skills</span>
+            <span>Projects</span>
+            <span>Education</span>
+            <span>Achievements</span>
+            <span>Networks</span>
+            </div>
+        </div>
+
+      </div>
+
+      <div class="welcome-terminal">
+        <span class="terminal-green">{{ profile.slug }}@BioCodeCV:~$</span> start portfolio<br>
+        Loading interactive CV workspace...<br>
+        Tip: open <strong>CV_WORKSPACE</strong> to begin.
+      </div>
+
+    </div>
+          `;
+                }
+            }
+        }
+
+        function toggleFolder(id, header) {
+            const folder = document.getElementById(id);
+            const arrow = header.querySelector("span");
+
+            folder.classList.toggle("closed");
+
+            if (folder.classList.contains("closed")) {
+                arrow.textContent = "▸";
+            } else {
+                arrow.textContent = "▾";
+            }
+        }
+
+
+        function runCell(button) {
+            const cell = button.closest(".colab-cell");
+            const counter = cell.querySelector(".execution-count");
+            const output = cell.querySelector(".cell-output");
+
+            counter.textContent = "[1]";
+            button.textContent = "✓";
+
+            button.style.animation = "none";
+
+            setTimeout(() => {
+                output.classList.add("show");
+            }, 300);
+        }
+
+        function showEmptyWorkspace() {
+            activeFile = null;
+
+            content.innerHTML = `
+    <div class="welcome-screen">
+
+      <div class="welcome-card">
+
+        <div class="welcome-photo">
+          <img src="{{ profile.cv.personal_info.foto }}" alt="{{ profile.cv.personal_info.nombre }}">
+        </div>
+
+        <div class="welcome-info">
+          <p class="welcome-label">BioCodeCV · Interactive Portfolio</p>
+
+          <h1>Bienvenido a BioCodeCV</h1>
+
+          <h2>Entorno interactivo para descubrir el perfil profesional del candidato</h2>
+
+          <p>
+            Explora este currículum como si fuera un proyecto real de desarrollo.
+            Cada archivo del panel lateral representa una sección profesional:
+            perfil, experiencia, educación, habilidades, proyectos, idiomas y más.
+          </p>
+
+          <div class="welcome-actions">
+            <span>1. Abre una carpeta del explorador</span>
+            <span>2. Selecciona un archivo</span>
+            <span>3. Pulsa ▶ para ejecutar la celda</span>
+          </div>
+
+          <div class="welcome-tags">
+            <span>Profile</span>
+            <span>Skills</span>
+            <span>Projects</span>
+            <span>Education</span>
+            <span>Achievements</span>
+            <span>Networks</span>
+            </div>
+        </div>
+
+      </div>
+
+      <div class="welcome-terminal">
+        <span class="terminal-green">{{ profile.slug }}@BioCodeCV:~$</span> start portfolio<br>
+        Loading interactive CV workspace...<br>
+        Tip: open <strong>CV_WORKSPACE</strong> to begin.
+      </div>
+
+    </div>
+  `;
+
+            document.querySelectorAll(".file-item").forEach(item => {
+                item.classList.remove("active");
+            });
+        }
+
+        const aiResponses = {
+            profile: "Sección principal del perfil profesional que reúne la información esencial del candidato, su presentación y los aspectos más relevantes de su trayectoria.",
+            skills: "La sección Skills muestra habilidades técnicas y blandas mediante un dashboard visual con barras, métricas y categorías profesionales.",
+            projects: "Projects destaca trabajos relevantes del candidato, incluyendo tecnologías usadas, descripción resumida y enlaces externos si existen.",
+            experience: "Experience organiza la trayectoria profesional en formato timeline, mostrando puesto, empresa, ubicación, periodo, descripción y logros.",
+            education: "Education muestra la formación académica del candidato en formato Markdown, con título, centro, ubicación y periodo.",
+            default: "Puedo ayudarte a explorar este BioCodeCV. Prueba preguntarme por profile, skills, projects, experience o education."
+        };
+
+        function addAIMessage(text, sender = "assistant") {
+            const aiBody = document.getElementById("aiBody");
+
+            const message = document.createElement("div");
+            message.className = `ai-message ${sender === "user" ? "ai-user" : "ai-assistant"}`;
+            message.textContent = text;
+
+            aiBody.appendChild(message);
+            aiBody.scrollTop = aiBody.scrollHeight;
+        }
+
+        function askAI(topic) {
+            addAIMessage(topic, "user");
+
+            setTimeout(() => {
+                addAIMessage(aiResponses[topic] || aiResponses.default, "assistant");
+            }, 300);
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById("aiInput");
+            const question = input.value.trim();
+
+            if (!question) return;
+
+            addAIMessage(question, "user");
+            input.value = "";
+
+            const lowerQuestion = question.toLowerCase();
+
+            let response = aiResponses.default;
+
+            if (lowerQuestion.includes("profile") || lowerQuestion.includes("candidate")) {
+                response = aiResponses.profile;
+            }
+
+            if (lowerQuestion.includes("skill") || lowerQuestion.includes("habilidad")) {
+                response = aiResponses.skills;
+            }
+
+            if (lowerQuestion.includes("project") || lowerQuestion.includes("proyecto")) {
+                response = aiResponses.projects;
+            }
+
+            if (lowerQuestion.includes("experience") || lowerQuestion.includes("experiencia")) {
+                response = aiResponses.experience;
+            }
+
+            if (lowerQuestion.includes("education") || lowerQuestion.includes("formación")) {
+                response = aiResponses.education;
+            }
+
+            setTimeout(() => {
+                addAIMessage(response, "assistant");
+            }, 400);
+        }
+
+        function handleAIKey(event) {
+            if (event.key === "Enter") {
+                sendAIMessage();
+            }
+        }
+
+
+        showEmptyWorkspace();
+    </script>
+
+</body>
+
+</html>
