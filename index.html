@@ -34,12 +34,21 @@
             overflow: hidden;
             background: var(--light);
             color: var(--text);
+
         }
+
 
         .app {
             height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        .app {
+            transform: scale(0.9);
+            transform-origin: top left;
+            width: 111.11%;
+            height: 111.11%;
         }
 
         .topbar {
@@ -700,8 +709,10 @@
             border-left: 5px solid #7c3aed;
             border-radius: 10px;
             padding: 14px;
-
             margin-bottom: 20px;
+
+            width: 100%;
+            overflow-x: auto;
         }
 
         .profile-summary {
@@ -710,6 +721,9 @@
             gap: 22px;
             align-items: center;
             padding: 4px;
+
+            width: 100%;
+            min-width: 0;
         }
 
         .profile-summary-text {
@@ -733,9 +747,9 @@
 
         .info-grid-output {
             display: grid;
-
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
+            width: 100%;
         }
 
         .info-card {
@@ -758,6 +772,14 @@
             font-size: 15px;
             color: #0f172a;
             font-weight: 500;
+        }
+
+        @media (max-width: 1400px) {
+
+            .info-grid-output {
+                grid-template-columns: repeat(2, minmax(180px, 1fr));
+            }
+
         }
 
         @media (max-width: 1100px) {
@@ -2107,7 +2129,8 @@
 
                 <div id="cvFolder" class="folder-content closed">
                     <div class="file-item active" onclick="openFile('personal_data.py')">🐍 personal_data.py</div>
-                    <div class="file-item" onclick="openFile('professional_profile.html')">🌐 professional_profile.html</div>
+                    <div class="file-item" onclick="openFile('professional_profile.html')">🌐 professional_profile.html
+                    </div>
                     <div class="file-item" onclick="openFile('skills.ipynb')">📊 skills.ipynb</div>
                     <div class="file-item" onclick="openFile('experience.ipynb')">💼 experience.ipynb</div>
                     <div class="file-item" onclick="openFile('education.md')">🎓 education.md</div>
@@ -3455,10 +3478,10 @@ display:
                             </div>
 
                             <div class="language-stat">
-                                <div class="language-stat">
-                                    <strong id="certificationCount">0</strong>
-                                    <span>Certifications</span>
-                                </div>
+
+                                <strong id="certificationCount">0</strong>
+                                <span>Certifications</span>
+
                             </div>
 
                             <div class="language-stat">
