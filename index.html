@@ -75,26 +75,20 @@
             font-size: 15px;
         }
 
-        .file-title h1 {
-            font-size: 20px;
-            font-weight: 500;
-            color: white;
-        }
-
-        .menus {
-            display: flex;
-            gap: 22px;
-            font-size: 14px;
-            margin-top: 4px;
-            color: #cbd5e1;
-        }
-
-        .top-actions {
-            margin-left: auto;
+        .file-title {
             display: flex;
             align-items: center;
-            gap: 18px;
+            height: 100%;
         }
+
+        .file-title h1 {
+            font-size: 30px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+
 
         .share {
             border: none;
@@ -125,10 +119,10 @@
         }
 
         .toolbar {
-            height: 44px;
+            height: 54px;
             background: #1e293b;
             color: #cbd5e1;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #dbe0e7;
             display: flex;
             align-items: center;
             padding: 0 20px;
@@ -375,6 +369,7 @@
             font-family: Consolas, monospace;
             font-size: 13px;
             padding: 8px 14px;
+
         }
 
         .terminal-tabs {
@@ -838,6 +833,11 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
+        }
+
+        .hard-skills-list h3 {
+            color: #4c1d95;
+            margin-bottom: 12px;
         }
 
         .skill-bar-row {
@@ -1519,6 +1519,7 @@
             gap: 14px;
         }
 
+
         .achievement-card {
             background: white;
             border: 1px solid #dbe4f0;
@@ -1530,8 +1531,8 @@
         }
 
         .achievement-icon {
-            width: 54px;
-            height: 54px;
+            width: 44px;
+            height: 44px;
 
             border-radius: 12px;
 
@@ -1567,7 +1568,9 @@
             line-height: 1.6;
         }
 
-        /* ESTILOS ACHIVEMENTS */
+
+
+        /* ESTILOS VOLUNTERING */
 
         .volunteering-summary {
             display: grid;
@@ -2011,6 +2014,7 @@
             border-radius: 999px;
             font-weight: bold;
             cursor: pointer;
+            margin-left: auto;
         }
 
         @media print {
@@ -2061,6 +2065,66 @@
                 page-break-inside: avoid;
             }
         }
+
+        .sidebar {
+            width: 260px;
+            transition: all 0.25s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+            border: none;
+        }
+
+        .sidebar.collapsed {
+            display: none;
+        }
+
+        .activity-btn {
+
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+
+            border-radius: 10px;
+
+            padding: 6px;
+
+        }
+
+        .activity-btn:hover {
+
+            background: rgba(124, 58, 237, 0.18);
+
+            box-shadow:
+                0 0 12px rgba(124, 58, 237, 0.35);
+
+            transform: scale(1.08);
+
+        }
+
+        .activity-btn.active {
+
+            background: rgba(124, 58, 237, 0.25);
+
+            box-shadow:
+                0 0 15px rgba(124, 58, 237, 0.5);
+
+        }
+
+        .ai-panel {
+            width: 300px;
+            transition: all 0.25s ease;
+        }
+
+        .ai-panel.collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+            border-left: none;
+        }
     </style>
 </head>
 
@@ -2068,58 +2132,30 @@
 
     <div class="app">
 
-        <header class="topbar">
+        <div class="toolbar">
+
             <div class="cv-icon">CV</div>
 
             <div class="file-title">
-                <h1>{{ profile.slug }}.ipynb ☆ ☁</h1>
-                <div class="menus">
-                    <span>Archivo</span>
-                    <span>Editar</span>
-                    <span>Ver</span>
-                    <span>Insertar</span>
-                    <span>Entorno de ejecución</span>
-                    <span>Herramientas</span>
-                    <span>Ayuda</span>
-                </div>
+                <h1>{{ profile.cv.personal_info.nombre }}.ipynb</h1>
+
             </div>
-
-            <div class="top-actions">
-                <span>☁</span>
-                <span>⚙</span>
-                <button class="share">👥 Compartir</button>
-                <div class="avatar">
-
-                    {% if profile.cv.personal_info.foto %}
-                    <img src="{{ profile.cv.personal_info.foto.url }}" alt="{{ profile.cv.personal_info.nombre }}">
-                    {% else %}
-                    {{ profile.cv.personal_info.nombre|first }}
-                    {% endif %}
-
-                </div>
-            </div>
-        </header>
-
-        <div class="toolbar">
-            <div class="command">🔍 Comandos</div>
-            <span>+ Código</span>
-            <span>+ Texto</span>
-            <strong>▶ Ejecutar todas</strong>
             <button class="pdf-btn" onclick="downloadPDF()">📄 Descargar PDF</button>
-            <div class="connect">Conectar ▾</div>
         </div>
 
         <div class="main">
 
             <nav class="activity">
-                <span>🧬</span>
-                <span>📁</span>
-                <span>🔎</span>
-                <span>⚙️</span>
-                <span>💻</span>
+
+                <span id="explorerBtn" class="activity-btn active" onclick="toggleExplorer()">
+                    📁
+                </span>
+
+                <span id="aiBtn" class="activity-btn" onclick="toggleAIPanel()">🧠</span>
+
             </nav>
 
-            <aside class="sidebar">
+            <aside id="sidebar" class="sidebar">
 
                 <div class="explorer-title">BIOCODE EXPLORER</div>
 
@@ -2128,15 +2164,14 @@
                 </div>
 
                 <div id="cvFolder" class="folder-content closed">
-                    <div class="file-item active" onclick="openFile('personal_data.py')">🐍 personal_data.py</div>
-                    <div class="file-item" onclick="openFile('professional_profile.html')">🌐 professional_profile.html
-                    </div>
+                    <div class="file-item active" onclick="openFile('profile.py')">🐍 profile.py</div>
+
                     <div class="file-item" onclick="openFile('skills.ipynb')">📊 skills.ipynb</div>
-                    <div class="file-item" onclick="openFile('experience.ipynb')">💼 experience.ipynb</div>
+                    <div class="file-item" onclick="openFile('experience.html')">💼 experience.html</div>
                     <div class="file-item" onclick="openFile('education.md')">🎓 education.md</div>
-                    <div class="file-item" onclick="openFile('training.yml')">📚 training.yml</div>
-                    <div class="file-item" onclick="openFile('projects.js')">🚀 projects.js</div>
-                    <div class="file-item" onclick="openFile('achievements.ipynb')">🏆 achievements.ipynb</div>
+
+                    <div class="file-item" onclick="openFile('portfolio.js')">🏅 portfolio.js</div>
+
                 </div>
 
                 <div class="folder-header" onclick="toggleFolder('contactFolder', this)">
@@ -2182,7 +2217,7 @@
 
             </section>
 
-            <aside class="ai-panel">
+            <aside id="aiPanel" class="ai-panel collapsed">
 
                 <div class="ai-header">
                     <span>🧠</span>
@@ -2247,20 +2282,20 @@
     =====================================================
   -->
 
-    <template data-file="personal_data.py">
+    <template data-file="profile.py">
 
         <div class="colab-cell">
 
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
 
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
-                    <span>Python · personal_data.py</span>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
+                    <span>Python · profile.py</span>
                 </div>
 
-                <pre class="code-input"><span class="code-comment"># personal_data.py </span>
+                <pre class="code-input"><span class="code-comment"># profile.py </span>
 
 from biocodecv.bioinformatics import (
     generate_profile_heatmap,
@@ -2292,14 +2327,38 @@ profile_summary = {
 
 }
 
-profile_summary</pre>
+profile_summary
+
+def build_professional_profile(profile):
+
+    professional_profile = (
+        profile.cv.professional_profile
+    )
+
+    return {
+        "profession":
+            professional_profile.profesion,
+
+        "objective":
+            professional_profile.objetivo,
+
+        "summary":
+            professional_profile.resumen
+    }
+
+
+professional_profile = (
+    build_professional_profile(profile)
+)
+
+professional_profile</pre>
 
                 <div class="cell-output">
 
                     <div class="output-section">
 
                         <div class="output-title">
-                            Output · profile.html
+                            Output · profile.py
                         </div>
                         <div class="profile-summary">
 
@@ -2401,54 +2460,6 @@ profile_summary</pre>
                         </div>
                     </div>
 
-                </div>
-
-            </div>
-
-        </div>
-
-    </template>
-
-    <template data-file="professional_profile.html">
-
-        <div class="colab-cell">
-            <div class="execution-count">[ ]</div>
-
-            <div class="cell-body">
-                <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
-                    <span>HTML · professional_profile.html</span>
-                </div>
-
-                <pre class="code-input"><span class="code-comment">&lt;!-- professional_profile.html --&gt;</span>
-<span class="code-comment">&lt;!-- Professional Profile Section --&gt;</span>
-
-&lt;section class="professional-profile"&gt;
-
-  &lt;div class="profile-badge"&gt;
-    ABOUT ME
-  &lt;/div&gt;
-
-  &lt;h1&gt;
-    {{ profile.cv.professional_profile.profesion }}
-  &lt;/h1&gt;
-
-  {% if profile.cv.professional_profile.objetivo %}
-
-    &lt;h2&gt;
-      {{ profile.cv.professional_profile.objetivo }}
-    &lt;/h2&gt;
-
-  {% endif %}
-
-  &lt;p&gt;
-    {{ profile.cv.professional_profile.resumen }}
-  &lt;/p&gt;
-
-&lt;/section&gt;</pre>
-
-                <div class="cell-output">
-
                     <div class="output-section">
 
                         <div class="output-title">
@@ -2456,7 +2467,6 @@ profile_summary</pre>
                         </div>
 
                         <div class="profile-summary-text">
-                            <h2>Professional Profile</h2>
 
                             <p>
                                 {{ profile.cv.professional_profile.resumen }}
@@ -2498,19 +2508,22 @@ profile_summary</pre>
 
                 </div>
 
+
             </div>
+
         </div>
 
     </template>
 
+
     <template data-file="skills.ipynb">
 
         <div class="colab-cell">
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
                     <span>Notebook · skills.ipynb</span>
                 </div>
 
@@ -2544,10 +2557,11 @@ dashboard</pre>
 
                 <div class="cell-output">
 
+                    <!-- CELDA 1: CONTADORES -->
                     <div class="output-section">
 
                         <div class="output-title">
-                            Output · skills.ipynb rendered successfully
+                            Output · skills dashboard summary
                         </div>
 
                         <div class="skills-dashboard">
@@ -2569,9 +2583,20 @@ dashboard</pre>
 
                         </div>
 
+                    </div>
+
+                    <!-- CELDA 2: LISTADO DE SKILLS -->
+                    <div class="output-section">
+
+                        <div class="output-title">
+                            Output · registered skills
+                        </div>
+
                         <div class="skills-layout">
 
                             <div class="hard-skills-list">
+
+                                <h3>Hard skills</h3>
 
                                 {% for s in profile.habilidades.all %}
                                 {% if s.tipo == 'hard' %}
@@ -2587,8 +2612,7 @@ dashboard</pre>
 
                                     {% if s.nivel %}
                                     <div class="skill-bar-track">
-                                        <div class="skill-bar-fill" style="width: {{ s.nivel|floatformat:0 }}0%;">
-                                        </div>
+                                        <div class="skill-bar-fill" style="width: {{ s.nivel|floatformat:0 }}0%;"></div>
                                     </div>
                                     {% endif %}
                                 </div>
@@ -2599,6 +2623,7 @@ dashboard</pre>
                             </div>
 
                             <div class="soft-skills-panel">
+
                                 <h3>Soft skills</h3>
 
                                 <div class="skill-tag-list">
@@ -2611,64 +2636,6 @@ dashboard</pre>
 
                                     {% endif %}
                                     {% endfor %}
-                                </div>
-
-                                <div class="radar-card">
-                                    <h3>Skill areas</h3>
-
-                                    <div class="radar-wrap">
-
-                                        <svg class="radar-svg" viewBox="0 0 220 220">
-                                            <polygon points="110,20 188,65 188,155 110,200 32,155 32,65" fill="none"
-                                                stroke="#cbd5e1" stroke-width="1" />
-
-                                            <polygon points="110,45 166,78 166,142 110,175 54,142 54,78" fill="none"
-                                                stroke="#e2e8f0" stroke-width="1" />
-
-                                            <polygon points="110,70 144,90 144,130 110,150 76,130 76,90" fill="none"
-                                                stroke="#e2e8f0" stroke-width="1" />
-
-                                            <polygon points="110,32 178,70 168,148 110,184 48,148 60,72"
-                                                fill="rgba(124,58,237,0.28)" stroke="#7c3aed" stroke-width="3" />
-
-                                            <circle cx="110" cy="32" r="4" fill="#7c3aed" />
-                                            <circle cx="178" cy="70" r="4" fill="#7c3aed" />
-                                            <circle cx="168" cy="148" r="4" fill="#7c3aed" />
-                                            <circle cx="110" cy="184" r="4" fill="#7c3aed" />
-                                            <circle cx="48" cy="148" r="4" fill="#7c3aed" />
-                                            <circle cx="60" cy="72" r="4" fill="#7c3aed" />
-
-                                            <text x="110" y="14" text-anchor="middle" font-size="11"
-                                                fill="#475569">Technical</text>
-                                            <text x="200" y="67" text-anchor="middle" font-size="11"
-                                                fill="#475569">Analysis</text>
-                                            <text x="200" y="160" text-anchor="middle" font-size="11"
-                                                fill="#475569">Communication</text>
-                                            <text x="110" y="216" text-anchor="middle" font-size="11"
-                                                fill="#475569">Learning</text>
-                                            <text x="18" y="160" text-anchor="middle" font-size="11"
-                                                fill="#475569">Tools</text>
-                                            <text x="20" y="67" text-anchor="middle" font-size="11" fill="#475569">Soft
-                                                Skills</text>
-                                        </svg>
-
-                                        <div class="radar-legend">
-
-                                            <span><strong>Technical:</strong> Dynamic</span>
-
-                                            <span><strong>Analysis:</strong> Dynamic</span>
-
-                                            <span><strong>Tools:</strong> Dynamic</span>
-
-                                            <span><strong>Learning:</strong> Dynamic</span>
-
-                                            <span><strong>Communication:</strong> Dynamic</span>
-
-                                            <span><strong>Soft Skills:</strong> Dynamic</span>
-
-                                        </div>
-
-                                    </div>
                                 </div>
 
                             </div>
@@ -2684,69 +2651,77 @@ dashboard</pre>
 
     </template>
 
-    <template data-file="experience.ipynb">
+    <template data-file="experience.html">
 
         <div class="colab-cell">
 
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
 
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
-                    <span>Notebook · experience.ipynb</span>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
+                    <span>Notebook · experience.html</span>
                 </div>
 
-                <pre class="code-input"><span class="code-comment"># experience.ipynb</span>
-<span class="code-comment"># Generate professional experience timeline</span>
+                <pre class="code-input"><span class="code-comment">&lt;!-- experience.html --&gt;</span>
+<span class="code-comment">&lt;!-- Professional experience timeline --&gt;</span>
 
-def build_experience_timeline(profile):
+&lt;section class="experience-timeline"&gt;
 
-    experiences = profile.experiencias.all()
+  {% for exp in profile.experiencias.all %}
 
-    timeline = []
+  &lt;article class="experience-card"&gt;
 
-    for exp in experiences:
+    &lt;h2&gt;
+      {{ exp.puesto }}
+    &lt;/h2&gt;
 
-        item = {
-            "position": exp.puesto,
-            "company": exp.empresa,
-            "location": exp.ubicacion,
-            "period": exp.periodo,
-            "description": exp.descripcion,
-            "achievements": []
-        }
+    &lt;div class="experience-company"&gt;
+      {{ exp.empresa }}
 
-        if exp.logros:
-            item["achievements"] = [
-                logro
-                for logro in exp.logros.splitlines()
-                if logro
-            ]
+      {% if exp.ubicacion %}
+      · {{ exp.ubicacion }}
+      {% endif %}
+    &lt;/div&gt;
 
-        timeline.append(item)
+    &lt;div class="experience-period"&gt;
+      {{ exp.periodo }}
+    &lt;/div&gt;
 
-    return timeline
+    {% if exp.descripcion %}
+    &lt;p&gt;
+      {{ exp.descripcion }}
+    &lt;/p&gt;
+    {% endif %}
 
+    {% if exp.logros %}
+    &lt;ul&gt;
 
-if profile.experiencias.exists():
+      {% for logro in exp.logros.splitlines %}
 
-    experience_timeline = build_experience_timeline(profile)
+      {% if logro %}
+      &lt;li&gt;
+        {{ logro }}
+      &lt;/li&gt;
+      {% endif %}
 
-    experience_summary = {
-        "total_experiences": len(experience_timeline),
-        "has_achievements": True,
-        "display_mode": "professional_timeline"
-    }
+      {% endfor %}
 
-experience_summary</pre>
+    &lt;/ul&gt;
+    {% endif %}
 
+  &lt;/article&gt;
+
+  {% endfor %}
+
+&lt;/section&gt;</pre>
                 <div class="cell-output">
 
                     <div class="output-section">
 
                         <div class="output-title">
-                            Output · experience.ipynb rendered successfully
+                            Output · experience.html dashboard summary
                         </div>
 
                         <div class="experience-summary">
@@ -2770,6 +2745,10 @@ experience_summary</pre>
                     </div>
 
                     <div class="output-section">
+
+                        <div class="output-title">
+                            Output · experience.html rendered successfully
+                        </div>
 
                         <div class="experience-timeline">
 
@@ -2828,17 +2807,17 @@ experience_summary</pre>
     <template data-file="education.md">
 
         <div class="colab-cell">
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
                     <span>Markdown · education.md</span>
                 </div>
 
                 <pre class="code-input"><span class="code-comment"># education.md</span>
 
-# Academic Timeline
+# Academic Education
 
 {% for edu in profile.educaciones.all %}
 
@@ -2846,10 +2825,33 @@ experience_summary</pre>
 
 - Title: {{ edu.titulo }}
 - Institution: {{ edu.centro }}
+
 {% if edu.ubicacion %}
 - Location: {{ edu.ubicacion }}
 {% endif %}
+
 - Period: {{ edu.periodo }}
+
+---
+
+{% endfor %}
+
+# Complementary Training
+
+{% for formacion in profile.formaciones.all %}
+
+## Training Record
+
+- Type: {{ formacion.get_tipo_display }}
+- Name: {{ formacion.nombre }}
+
+{% if formacion.entidad %}
+- Entity: {{ formacion.entidad }}
+{% endif %}
+
+{% if formacion.fecha %}
+- Year: {{ formacion.fecha|date:"Y" }}
+{% endif %}
 
 ---
 
@@ -2860,7 +2862,7 @@ experience_summary</pre>
                     <div class="output-section">
 
                         <div class="output-title">
-                            Output · education.md rendered successfully
+                            Output · education.md dashboard summary
                         </div>
 
                         <div class="education-summary">
@@ -2870,9 +2872,9 @@ experience_summary</pre>
                                 <span>Academic records</span>
                             </div>
 
-                            <div class="education-stat">
-                                <strong>MD</strong>
-                                <span>Format</span>
+                            <div class="training-stat">
+                                <strong id="trainingCount">0</strong>
+                                <span>Training records</span>
                             </div>
 
                             <div class="education-stat">
@@ -2885,6 +2887,10 @@ experience_summary</pre>
                     </div>
 
                     <div class="output-section">
+
+                        <div class="output-title">
+                            Output · education.md rendered successfully
+                        </div>
 
                         <div class="education-list">
 
@@ -2916,81 +2922,12 @@ experience_summary</pre>
 
                     </div>
 
-                </div>
-
-            </div>
-        </div>
-
-    </template>
-
-    <template data-file="training.yml">
-
-        <div class="colab-cell">
-
-            <div class="execution-count">[ ]</div>
-
-            <div class="cell-body">
-
-                <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
-                    <span>YAML · training.yml</span>
-                </div>
-
-                <pre class="code-input"><span class="code-comment"># training.yml</span>
-<span class="code-comment"># Complementary training configuration</span>
-
-training:
-
-{% for formacion in profile.formaciones.all %}
-
-  - type: "{{ formacion.get_tipo_display }}"
-    name: "{{ formacion.nombre }}"
-    {% if formacion.entidad %}
-    entity: "{{ formacion.entidad }}"
-    {% endif %}
-    {% if formacion.fecha %}
-    year: "{{ formacion.fecha|date:"Y" }}"
-    {% endif %}
-
-{% endfor %}
-
-display:
-
-  show_section: true
-  visualization: "training_grid"
-  sort_by: "year"
-  group_by: "type"</pre>
-
-                <div class="cell-output">
 
                     <div class="output-section">
 
                         <div class="output-title">
-                            Output · training.yml rendered successfully
+                            Output · Complementary Training rendered successfully
                         </div>
-
-                        <div class="training-summary">
-
-                            <div class="training-stat">
-                                <strong id="trainingCount">0</strong>
-                                <span>Training records</span>
-                            </div>
-
-                            <div class="training-stat">
-                                <strong>Types</strong>
-                                <span>Training categories</span>
-                            </div>
-
-                            <div class="training-stat">
-                                <strong>YAML</strong>
-                                <span>Format</span>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="output-section">
 
                         <div class="training-grid">
 
@@ -3029,24 +2966,25 @@ display:
                 </div>
 
             </div>
-
         </div>
 
     </template>
 
-    <template data-file="projects.js">
+
+
+    <template data-file="portfolio.js">
 
         <div class="colab-cell">
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
-                    <span>JavaScript · projects.js</span>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
+                    <span>JavaScript · portfolio.js</span>
                 </div>
 
-                <pre class="code-input"><span class="code-comment">// projects.js</span>
-<span class="code-comment">// Generate reusable project portfolio cards</span>
+                <pre class="code-input"><span class="code-comment">// portfolio.js</span>
+<span class="code-comment">// Generate reusable portfolio sections: projects and achievements</span>
 
 function buildProjectPortfolio(projects) {
 
@@ -3068,17 +3006,45 @@ function buildProjectPortfolio(projects) {
 }
 
 
+function buildAchievementTimeline(achievements) {
+
+  return achievements.map(achievement => ({
+
+    title: achievement.titulo,
+
+    type: achievement.tipo,
+
+    label: achievement.get_tipo_display(),
+
+    year: achievement.fecha,
+
+    description: achievement.descripcion,
+
+    icon: getAchievementIcon(
+      achievement.tipo
+    )
+  }));
+}
+
+
 const portfolioProjects = buildProjectPortfolio(
   profile.proyectos.all()
 );
 
-renderProjectGrid(portfolioProjects);</pre>
+const achievementTimeline = buildAchievementTimeline(
+  profile.logros.all()
+);
+
+
+renderProjectGrid(portfolioProjects);
+
+renderAchievementTimeline(achievementTimeline);</pre>
 
                 <div class="cell-output">
 
                     <div class="output-section">
                         <div class="output-title">
-                            Output · projects.js rendered successfully
+                            Output · portfolio.js dashboard summary
                         </div>
 
                         <div class="project-summary">
@@ -3088,9 +3054,9 @@ renderProjectGrid(portfolioProjects);</pre>
                                 <span>Featured projects</span>
                             </div>
 
-                            <div class="project-stat">
-                                <strong>Tech</strong>
-                                <span>Technologies</span>
+                            <div class="achievement-stat">
+                                <strong id="achievementCount">0</strong>
+                                <span>Total achievements</span>
                             </div>
 
                             <div class="project-stat">
@@ -3102,6 +3068,10 @@ renderProjectGrid(portfolioProjects);</pre>
                     </div>
 
                     <div class="output-section">
+
+                        <div class="output-title">
+                            Output · projects.js rendered successfully
+                        </div>
 
                         <div class="project-grid">
 
@@ -3139,102 +3109,13 @@ renderProjectGrid(portfolioProjects);</pre>
 
                     </div>
 
-                </div>
 
-            </div>
-        </div>
-
-    </template>
-
-    <template data-file="achievements.ipynb">
-
-        <div class="colab-cell">
-
-            <div class="execution-count">[ ]</div>
-
-            <div class="cell-body">
-
-                <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
-                    <span>Notebook · achievements.ipynb</span>
-                </div>
-
-                <pre class="code-input"><span class="code-comment"># achievements.ipynb</span>
-<span class="code-comment"># Generate achievement timeline from user profile</span>
-
-def build_achievement_timeline(profile):
-
-    achievements = profile.logros.all()
-
-    timeline = []
-
-    for logro in achievements:
-
-        timeline.append({
-
-            "title":
-                logro.titulo,
-
-            "type":
-                logro.tipo,
-
-            "label":
-                logro.get_tipo_display(),
-
-            "year":
-                logro.fecha,
-
-            "description":
-                logro.descripcion
-
-        })
-
-    return timeline
-
-
-if profile.mostrar_logros and profile.logros.exists():
-
-    achievement_timeline = (
-        build_achievement_timeline(profile)
-    )
-
-    achievement_summary = {
-        "total_achievements": len(achievement_timeline),
-        "display_mode": "achievement_timeline"
-    }
-
-achievement_summary</pre>
-
-                <div class="cell-output">
 
                     <div class="output-section">
 
                         <div class="output-title">
-                            Output · achievements.ipynb rendered successfully
+                            Output · achievements rendered successfully
                         </div>
-
-                        <div class="achievement-summary">
-
-                            <div class="achievement-stat">
-                                <strong id="achievementCount">0</strong>
-                                <span>Total achievements</span>
-                            </div>
-
-                            <div class="achievement-stat">
-                                <strong>Types</strong>
-                                <span>Awards · Merits · Events</span>
-                            </div>
-
-                            <div class="achievement-stat">
-                                <strong>Timeline</strong>
-                                <span>Display mode</span>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="output-section">
 
                         <div class="achievement-timeline">
 
@@ -3242,7 +3123,7 @@ achievement_summary</pre>
 
                             <div class="achievement-card" data-achievement-item>
 
-                                <div class="achievement-icon">
+                                <div>
 
                                     {% if logro.tipo == 'premio' %}
                                     🏆
@@ -3289,20 +3170,21 @@ achievement_summary</pre>
                 </div>
 
             </div>
-
         </div>
 
     </template>
 
 
+
+
     <template data-file="networks.json">
 
         <div class="colab-cell">
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
                     <span>JSON · networks.json</span>
                 </div>
 
@@ -3329,7 +3211,7 @@ achievement_summary</pre>
 
                     <div class="output-section">
                         <div class="output-title">
-                            Output · networks.json rendered successfully
+                            Output · networks.json dashboard summary
                         </div>
 
                         <div class="network-summary">
@@ -3353,6 +3235,10 @@ achievement_summary</pre>
                     </div>
 
                     <div class="output-section">
+
+                        <div class="output-title">
+                            Output · networks.json rendered successfully
+                        </div>
 
                         <div class="network-grid">
 
@@ -3433,12 +3319,12 @@ achievement_summary</pre>
 
         <div class="colab-cell">
 
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
 
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
                     <span>YAML · languages.yml</span>
                 </div>
 
@@ -3467,7 +3353,7 @@ display:
                     <div class="output-section">
 
                         <div class="output-title">
-                            Output · languages.yml rendered successfully
+                            Output · languages.yml dashboard summary
                         </div>
 
                         <div class="language-summary">
@@ -3494,6 +3380,10 @@ display:
                     </div>
 
                     <div class="output-section">
+
+                        <div class="output-title">
+                            Output · languages.yml rendered successfully
+                        </div>
 
                         <div class="language-list">
 
@@ -3540,11 +3430,11 @@ display:
     <template data-file="interests.json">
 
         <div class="colab-cell">
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
                     <span>JSON · interests.json</span>
                 </div>
 
@@ -3573,7 +3463,7 @@ display:
 
                     <div class="output-section">
                         <div class="output-title">
-                            Output · interests.json rendered successfully
+                            Output · interests.json dashboard summary
                         </div>
 
                         <div class="interest-summary">
@@ -3597,6 +3487,10 @@ display:
                     </div>
 
                     <div class="output-section">
+
+                        <div class="output-title">
+                            Output · interests.json rendered successfully
+                        </div>
 
                         <div class="interest-tag-cloud">
 
@@ -3622,11 +3516,11 @@ display:
     <template data-file="volunteering.txt">
 
         <div class="colab-cell">
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
                     <span>Text · volunteering.txt</span>
                 </div>
 
@@ -3661,7 +3555,7 @@ Display rules:
 
                     <div class="output-section">
                         <div class="output-title">
-                            Output · volunteering.txt rendered successfully
+                            Output · volunteering.txt dashboard summary
                         </div>
 
                         <div class="volunteering-summary">
@@ -3685,6 +3579,10 @@ Display rules:
                     </div>
 
                     <div class="output-section">
+
+                        <div class="output-title">
+                            Output · volunteering.txt rendered successfully
+                        </div>
 
                         <div class="volunteering-list">
 
@@ -3725,12 +3623,12 @@ Display rules:
 
         <div class="colab-cell">
 
-            <div class="execution-count">[ ]</div>
+            <div class="execution-count">[1]</div>
 
             <div class="cell-body">
 
                 <div class="cell-top">
-                    <button class="run-btn" onclick="runCell(this)">▶</button>
+                    <button class="run-btn" onclick="runCell(this)">✓</button>
                     <span>CONFIG · preferences.config</span>
                 </div>
 
@@ -3867,6 +3765,17 @@ display_mode = "professional_preferences"</pre>
             content.innerHTML = getFileContent(file);
             activeFile = file;
 
+            const outputs =
+                document.querySelectorAll(
+                    ".cell-output"
+                );
+
+            outputs.forEach(output => {
+                output.classList.add(
+                    "show"
+                );
+            });
+
             document.querySelectorAll(".file-item").forEach(item => {
                 item.classList.remove("active");
                 if (item.textContent.includes(file)) {
@@ -3887,7 +3796,7 @@ display_mode = "professional_preferences"</pre>
                 updateSkillsDashboard();
             }
 
-            if (file === "experience.ipynb") {
+            if (file === "experience.html") {
                 updateExperienceDashboard();
             }
 
@@ -3895,17 +3804,12 @@ display_mode = "professional_preferences"</pre>
                 updateEducationDashboard();
             }
 
-            if (file === "training.yml") {
-                updateTrainingDashboard();
-            }
 
-            if (file === "projects.js") {
+            if (file === "portfolio.js") {
                 updateProjectDashboard();
             }
 
-            if (file === "achievements.ipynb") {
-                updateAchievementDashboard();
-            }
+
 
             if (file === "networks.json") {
                 updateNetworkDashboard();
@@ -3976,9 +3880,15 @@ display_mode = "professional_preferences"</pre>
         }
 
         function updateEducationDashboard() {
+
             const educations =
                 document.querySelectorAll(
                     "[data-education-item]"
+                ).length;
+
+            const trainings =
+                document.querySelectorAll(
+                    "[data-training-item]"
                 ).length;
 
             const educationCount =
@@ -3986,25 +3896,19 @@ display_mode = "professional_preferences"</pre>
                     "educationCount"
                 );
 
-            if (educationCount) {
-                educationCount.textContent =
-                    educations;
-            }
-        }
-
-        function updateTrainingDashboard() {
-            const trainings =
-                document.querySelectorAll(
-                    "[data-training-item]"
-                ).length;
-
             const trainingCount =
                 document.getElementById(
                     "trainingCount"
                 );
 
+            if (educationCount) {
+                educationCount.textContent =
+                    educations;
+            }
+
             if (trainingCount) {
-                trainingCount.textContent = trainings;
+                trainingCount.textContent =
+                    trainings;
             }
         }
 
@@ -4019,12 +3923,6 @@ display_mode = "professional_preferences"</pre>
                     "projectCount"
                 );
 
-            if (projectCount) {
-                projectCount.textContent = projects;
-            }
-        }
-
-        function updateAchievementDashboard() {
             const achievements =
                 document.querySelectorAll(
                     "[data-achievement-item]"
@@ -4039,7 +3937,12 @@ display_mode = "professional_preferences"</pre>
                 achievementCount.textContent =
                     achievements;
             }
+
+            if (projectCount) {
+                projectCount.textContent = projects;
+            }
         }
+
 
         function updateNetworkDashboard() {
             const networks =
@@ -4175,7 +4078,7 @@ display_mode = "professional_preferences"</pre>
                     renderContent(openTabs[openTabs.length - 1]);
                 } else {
                     content.innerHTML = `
-    <div class="welcome-screen">
+   <div class="welcome-screen">
 
       <div class="welcome-card">
 
@@ -4188,20 +4091,37 @@ display_mode = "professional_preferences"</pre>
 
           <h1>Bienvenido a BioCodeCV</h1>
 
-          <h2>Entorno interactivo para descubrir el perfil profesional del candidato</h2>
+          <h2>Entorno interactivo para descubrir el perfil profesional</h2>
+
+          <h1>
+        {{ profile.cv.personal_info.nombre }}
+        {{ profile.cv.personal_info.apellidos }}
+          </h1>
+          
+          <h2>
+        {{ profile.cv.professional_profile.profesion }}
+         
+         </h2>
 
           <p>
-            Explora este currículum como si fuera un proyecto real de desarrollo.
-            Cada archivo del panel lateral representa una sección profesional:
-            perfil, experiencia, educación, habilidades, proyectos, idiomas y más.
-          </p>
+    {{ profile.cv.professional_profile.resumen }}
+     </p>
 
-          <div class="welcome-actions">
-            <span>1. Abre una carpeta del explorador</span>
-            <span>2. Selecciona un archivo</span>
-            <span>3. Pulsa ▶ para ejecutar la celda</span>
-          </div>
+        <div class="welcome-actions">
 
+    <span>
+        📄 Interactive Portfolio
+    </span>
+
+    <span>
+        💼 Professional Profile
+    </span>
+
+    <span>
+        🌐 Digital Resume
+    </span>
+
+</div>
           <div class="welcome-tags">
             <span>Profile</span>
             <span>Skills</span>
@@ -4272,20 +4192,37 @@ display_mode = "professional_preferences"</pre>
 
           <h1>Bienvenido a BioCodeCV</h1>
 
-          <h2>Entorno interactivo para descubrir el perfil profesional del candidato</h2>
+          <h2>Entorno interactivo para descubrir el perfil profesional</h2>
+
+          <h1>
+        {{ profile.cv.personal_info.nombre }}
+        {{ profile.cv.personal_info.apellidos }}
+          </h1>
+          
+          <h2>
+        {{ profile.cv.professional_profile.profesion }}
+         
+         </h2>
 
           <p>
-            Explora este currículum como si fuera un proyecto real de desarrollo.
-            Cada archivo del panel lateral representa una sección profesional:
-            perfil, experiencia, educación, habilidades, proyectos, idiomas y más.
-          </p>
+    {{ profile.cv.professional_profile.resumen }}
+     </p>
 
-          <div class="welcome-actions">
-            <span>1. Abre una carpeta del explorador</span>
-            <span>2. Selecciona un archivo</span>
-            <span>3. Pulsa ▶ para ejecutar la celda</span>
-          </div>
+        <div class="welcome-actions">
 
+    <span>
+        📄 Interactive Portfolio
+    </span>
+
+    <span>
+        💼 Professional Profile
+    </span>
+
+    <span>
+        🌐 Digital Resume
+    </span>
+
+</div>
           <div class="welcome-tags">
             <span>Profile</span>
             <span>Skills</span>
@@ -4383,6 +4320,36 @@ display_mode = "professional_preferences"</pre>
                 sendAIMessage();
             }
         }
+
+        function toggleExplorer() {
+
+            const sidebar =
+                document.getElementById(
+                    "sidebar"
+                );
+
+            const explorerBtn =
+                document.getElementById(
+                    "explorerBtn"
+                );
+
+            sidebar.classList.toggle(
+                "collapsed"
+            );
+
+            explorerBtn.classList.toggle(
+                "active"
+            );
+        }
+
+        function toggleAIPanel() {
+            const aiPanel = document.getElementById("aiPanel");
+            const aiBtn = document.getElementById("aiBtn");
+
+            aiPanel.classList.toggle("collapsed");
+            aiBtn.classList.toggle("active");
+        }
+
 
 
         showEmptyWorkspace();
