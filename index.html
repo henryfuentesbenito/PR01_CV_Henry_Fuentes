@@ -283,6 +283,7 @@
             overflow-y: auto;
             background: #f8fafc;
             padding: 32px 26px 130px;
+
         }
 
         .cell {
@@ -418,7 +419,15 @@
             grid-template-columns: 42px 1fr;
             gap: 10px;
             margin-bottom: 18px;
+
+            width: 85%;
+
+    max-width: 1500px;
+
+    margin: 0 auto 30px auto;
         }
+
+   
 
         .execution-count {
             font-family: Consolas, monospace;
@@ -1748,7 +1757,7 @@
             }
         }
 
-       
+
 
 
 
@@ -2004,6 +2013,52 @@
             overflow: hidden;
             border-left: none;
         }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 100%;
+                max-width: none;
+                background: #0f172a;
+            }
+
+            .main {
+                background: #0f172a;
+            }
+        }
+
+        /* ESTILO MODO OSCURO */
+
+        body.dark-mode {
+            background: #0f172a;
+            color: white;
+        }
+
+        body.dark-mode .workspace,
+        body.dark-mode .notebook {
+            background: #0f172a;
+        }
+
+        body.dark-mode .colab-cell {
+            background: #111827;
+        }
+
+        body.dark-mode .cell-output {
+            background: #111827;
+        }
+
+        body.dark-mode .output-section {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        body.dark-mode .file-item {
+            color: #e2e8f0;
+        }
+
+        #themeBtn.active {
+            background: rgba(124, 58, 237, .25);
+            box-shadow: 0 0 14px rgba(124, 58, 237, .5);
+        }
     </style>
 </head>
 
@@ -2028,6 +2083,10 @@
 
                 <span id="explorerBtn" class="activity-btn active" onclick="toggleExplorer()">
                     📁
+                </span>
+
+                <span id="themeBtn" class="activity-btn" onclick="toggleTheme()">
+                    🌙
                 </span>
 
 
@@ -4088,7 +4147,7 @@ display_mode = "professional_preferences"</pre>
             });
         }
 
-        
+
 
         function toggleExplorer() {
 
@@ -4119,6 +4178,27 @@ display_mode = "professional_preferences"</pre>
             aiBtn.classList.toggle("active");
         }
 
+        function toggleTheme() {
+
+            document.body.classList.toggle(
+                "dark-mode"
+            );
+
+            const btn =
+                document.getElementById(
+                    "themeBtn"
+                );
+
+            if (
+                document.body.classList.contains(
+                    "dark-mode"
+                )
+            ) {
+                btn.textContent = "☀️";
+            } else {
+                btn.textContent = "🌙";
+            }
+        }
 
 
         showEmptyWorkspace();
