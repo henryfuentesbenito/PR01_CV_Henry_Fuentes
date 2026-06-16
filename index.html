@@ -422,12 +422,12 @@
 
             width: 85%;
 
-    max-width: 1500px;
+            max-width: 1500px;
 
-    margin: 0 auto 30px auto;
+            margin: 0 auto 30px auto;
         }
 
-   
+
 
         .execution-count {
             font-family: Consolas, monospace;
@@ -2058,6 +2058,43 @@
         #themeBtn.active {
             background: rgba(124, 58, 237, .25);
             box-shadow: 0 0 14px rgba(124, 58, 237, .5);
+        }
+
+        @media (max-width: 768px) {
+
+            .notebook {
+                padding: 12px 6px 120px;
+            }
+
+            .colab-cell {
+                width: 100%;
+                max-width: none;
+                margin-bottom: 20px;
+            }
+
+        }
+
+        @media (max-width: 768px) {
+
+            .execution-count {
+                display: none;
+            }
+
+            .colab-cell {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 768px) {
+
+            .welcome-info h1,
+            .welcome-info h2,
+            .welcome-info p {
+                word-break: break-word;
+                overflow-wrap: break-word;
+            }
+
         }
     </style>
 </head>
